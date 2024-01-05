@@ -5,15 +5,15 @@ using Backend.Fx.Persistence.IdGeneration;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
-namespace Backend.Fx.Persistence.AdoNet;
+namespace Backend.Fx.Persistence.AdoNet.Postgres;
 
-public abstract class OracleSequence<TId> : ISequence<TId> 
+public abstract class PostgresSequence<TId> : ISequence<TId>
 {
-    private readonly ILogger _logger = Log.Create<OracleSequence<TId>>();
+    private readonly ILogger _logger = Log.Create<PostgresSequence<TId>>();
     private readonly IDbConnectionFactory _dbConnectionFactory;
     private readonly int _startWith;
 
-    protected OracleSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
+    protected PostgresSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
     {
         _dbConnectionFactory = dbConnectionFactory;
         _startWith = startWith;
@@ -22,42 +22,37 @@ public abstract class OracleSequence<TId> : ISequence<TId>
     protected abstract string SequenceName { get; }
     protected abstract string SchemaName { get; }
 
-    private string SchemaPrefix
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(SchemaName)) return string.Empty;
-
-            return SchemaName + ".";
-        }
-    }
-
     public void EnsureSequence()
     {
-        _logger.LogInformation("Ensuring existence of oracle sequence {SchemaPrefix}.{SequenceName}", SchemaPrefix, SequenceName);
+        _logger.LogInformation("Ensuring existence of postgres sequence {SchemaName}.{SequenceName}", SchemaName,
+            SequenceName);
 
         using IDbConnection dbConnection = _dbConnectionFactory.Create();
         dbConnection.Open();
         bool sequenceExists;
         using (IDbCommand command = dbConnection.CreateCommand())
         {
-            command.CommandText = $"SELECT count(*) FROM user_sequences WHERE sequence_name = '{SequenceName}'";
-            sequenceExists = (decimal)command.ExecuteScalar()! == 1m;
+            command.CommandText =
+                $"SELECT count(*) FROM information_schema.sequences " +
+                $"WHERE sequence_name = '{SequenceName}' AND sequence_schema = '{SchemaName}'";
+            sequenceExists = (long)command.ExecuteScalar()! == 1L;
         }
 
         if (sequenceExists)
         {
-            _logger.LogInformation("Oracle sequence {SchemaPrefix}.{SequenceName} exists", SchemaPrefix, SequenceName);
+            _logger.LogInformation("Sequence {SchemaName}.{SequenceName} exists", SchemaName, SequenceName);
         }
         else
         {
-            _logger.LogInformation("Oracle sequence {SchemaPrefix}.{SequenceName} does not exist yet and will be created now",
-                SchemaPrefix,
+            _logger.LogInformation(
+                "Sequence {SchemaName}.{SequenceName} does not exist yet and will be created now",
+                SchemaName,
                 SequenceName);
             using IDbCommand cmd = dbConnection.CreateCommand();
-            cmd.CommandText = $"CREATE SEQUENCE {SchemaPrefix}{SequenceName} START WITH {_startWith} INCREMENT BY {Increment}";
+            cmd.CommandText =
+                $"CREATE SEQUENCE {SchemaName}.{SequenceName} START WITH {_startWith} INCREMENT BY {Increment}";
             cmd.ExecuteNonQuery();
-            _logger.LogInformation("Oracle sequence {SchemaPrefix}.{SequenceName} created", SchemaPrefix, SequenceName);
+            _logger.LogInformation("Sequence {SchemaName}.{SequenceName} created", SchemaName, SequenceName);
         }
     }
 
@@ -67,27 +62,24 @@ public abstract class OracleSequence<TId> : ISequence<TId>
         dbConnection.Open();
 
         using IDbCommand command = dbConnection.CreateCommand();
-        command.CommandText = $"SELECT {SchemaPrefix}{SequenceName}.NEXTVAL FROM dual";
+        command.CommandText = $"SELECT nextval('{SchemaName}.{SequenceName}');";
         TId nextValue = ConvertNextValueFromSequence(
             command.ExecuteScalar()
             ?? throw new InvalidOperationException("Getting next value from sequence returned NULL"));
-        _logger.LogDebug("Oracle sequence {SchemaPrefix}.{SequenceName} served {NextValue} as next value",
-            SchemaPrefix,
-            SequenceName,
-            nextValue);
+        _logger.LogDebug("{SchemaName}.{SequenceName} served {2} as next value", SchemaName, SequenceName, nextValue);
 
         return nextValue;
     }
 
     public abstract TId Increment { get; }
-        
+
     protected abstract TId ConvertNextValueFromSequence(object valueFromSequence);
 }
-    
+
 [PublicAPI]
-public abstract class OracleIntSequence : OracleSequence<int>
+public abstract class PostgresIntSequence : PostgresSequence<int>
 {
-    protected OracleIntSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1) 
+    protected PostgresIntSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
         : base(dbConnectionFactory, startWith)
     {
     }
@@ -97,11 +89,11 @@ public abstract class OracleIntSequence : OracleSequence<int>
         return Convert.ToInt32(valueFromSequence);
     }
 }
-    
+
 [PublicAPI]
-public abstract class OracleLongSequence : OracleSequence<long>
+public abstract class PostgresLongSequence : PostgresSequence<long>
 {
-    protected OracleLongSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1) 
+    protected PostgresLongSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
         : base(dbConnectionFactory, startWith)
     {
     }

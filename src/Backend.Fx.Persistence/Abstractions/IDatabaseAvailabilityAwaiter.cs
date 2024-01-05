@@ -7,5 +7,7 @@ namespace Backend.Fx.Persistence.Abstractions;
 [PublicAPI]
 public interface IDatabaseAvailabilityAwaiter
 {
-    Task WaitForDatabase(CancellationToken cancellationToken);
+    void WaitForDatabase();
+    
+    Task WaitForDatabaseAsync(CancellationToken cancellationToken);
 }
