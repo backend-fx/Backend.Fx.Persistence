@@ -1,9 +1,8 @@
 ﻿using System.Data;
 
-namespace Backend.Fx.Persistence.AdoNet
+namespace Backend.Fx.Persistence.AdoNet;
+
+public interface IDbConnectionFactory
 {
-    public interface IDbConnectionFactory
-    {
-        IDbConnection Create();
-    }
+    IDbConnection Create();
 }
