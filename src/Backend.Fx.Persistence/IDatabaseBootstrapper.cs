@@ -1,10 +1,15 @@
-﻿namespace Backend.Fx.Persistence
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
+
+namespace Backend.Fx.Persistence;
+
+/// <summary>
+/// Encapsulates database bootstrapping. This interface hides the implementation details for creating/migrating the database
+/// </summary>
+[PublicAPI]
+public interface IDatabaseBootstrapper : IDisposable
 {
-    /// <summary>
-    /// Encapsulates database bootstrapping. This interface hides the implementation details for creating/migrating the database
-    /// </summary>
-    public interface IDatabaseBootstrapper : IDisposable
-    {
-        Task EnsureDatabaseExistenceAsync(CancellationToken cancellationToken);
-    }
+    Task EnsureDatabaseExistenceAsync(CancellationToken cancellationToken);
 }
