@@ -13,9 +13,9 @@ namespace Backend.Fx.Persistence.AdoNet
             throw new NotSupportedException("The current DB transaction cannot be created on the fly");
         }
 
-        protected override string Describe(IDbTransaction? instance)
+        protected override string Describe(IDbTransaction instance)
         {
-            return instance == null ? "<NULL>" : $"DbTransaction #{instance.GetHashCode()}";   
+            return $"DbTransaction #{instance.GetHashCode()}";   
         }
     }
 }
