@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{259A30DB-EEEC-4C72-8172-2567FE83BF08}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence", "src\Backend.Fx.Persistence\Backend.Fx.Persistence.csproj", "{38704849-F9CE-4FD7-9573-5CDD9F5B4507}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -10,5 +12,9 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{259A30DB-EEEC-4C72-8172-2567FE83BF08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{259A30DB-EEEC-4C72-8172-2567FE83BF08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38704849-F9CE-4FD7-9573-5CDD9F5B4507}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38704849-F9CE-4FD7-9573-5CDD9F5B4507}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38704849-F9CE-4FD7-9573-5CDD9F5B4507}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38704849-F9CE-4FD7-9573-5CDD9F5B4507}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
