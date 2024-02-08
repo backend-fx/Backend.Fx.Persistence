@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Data;
 using Backend.Fx.Logging;
-using Backend.Fx.Persistence.IdGeneration;
-using JetBrains.Annotations;
+using Backend.Fx.Persistence.AdoNet;
+using Backend.Fx.Persistence.Sequences;
 using Microsoft.Extensions.Logging;
 
-namespace Backend.Fx.Persistence.AdoNet.Postgres;
+namespace Backend.Fx.Persistence.Postgres.Sequences;
 
 public abstract class PostgresSequence<TId> : ISequence<TId>
 {
@@ -74,32 +74,4 @@ public abstract class PostgresSequence<TId> : ISequence<TId>
     public abstract TId Increment { get; }
 
     protected abstract TId ConvertNextValueFromSequence(object valueFromSequence);
-}
-
-[PublicAPI]
-public abstract class PostgresIntSequence : PostgresSequence<int>
-{
-    protected PostgresIntSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
-        : base(dbConnectionFactory, startWith)
-    {
-    }
-
-    protected override int ConvertNextValueFromSequence(object valueFromSequence)
-    {
-        return Convert.ToInt32(valueFromSequence);
-    }
-}
-
-[PublicAPI]
-public abstract class PostgresLongSequence : PostgresSequence<long>
-{
-    protected PostgresLongSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
-        : base(dbConnectionFactory, startWith)
-    {
-    }
-
-    protected override long ConvertNextValueFromSequence(object valueFromSequence)
-    {
-        return Convert.ToInt64(valueFromSequence);
-    }
 }

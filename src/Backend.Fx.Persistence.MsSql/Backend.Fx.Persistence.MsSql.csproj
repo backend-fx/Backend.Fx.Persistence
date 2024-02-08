@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -12,7 +12,7 @@
         <Authors>Marc Wittke</Authors>
         <Company>anic GmbH</Company>
         <Copyright>All rights reserved. Distributed under the terms of the MIT License.</Copyright>
-        <Description>Abstractions of Backend.Fx persistence.</Description>
+        <Description>Implementation of Backend.Fx persistence for MS SQL Server .</Description>
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <PackageLicense>MIT</PackageLicense>
         <PackageProjectUrl>https://github.com/backend-fx/Backend.Fx.Persistence</PackageProjectUrl>
@@ -22,9 +22,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Backend.Fx" Version="8.0.4"/>
-        <PackageReference Include="Backend.Fx.Execution.Abstractions" Version="1.0.0"/>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+      <ProjectReference Include="..\Backend.Fx.Persistence\Backend.Fx.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

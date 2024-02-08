@@ -10,12 +10,12 @@ using NodaTime;
 namespace Backend.Fx.Persistence.AdoNet;
 
 [PublicAPI]
-public abstract class DbUtil : IDbUtil
+public abstract class AdoNetDbUtil : IDbUtil
 {
-    private static readonly ILogger Logger = Log.Create<DbUtil>();
+    private static readonly ILogger Logger = Log.Create<AdoNetDbUtil>();
     private readonly IDbConnectionFactory _dbConnectionFactory;
 
-    protected DbUtil(IDbConnectionFactory dbConnectionFactory)
+    protected AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory)
     {
         _dbConnectionFactory = dbConnectionFactory;
     }

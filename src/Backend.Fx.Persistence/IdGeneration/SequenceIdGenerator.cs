@@ -1,3 +1,5 @@
+using Backend.Fx.Persistence.Sequences;
+
 namespace Backend.Fx.Persistence.IdGeneration;
 
 public class SequenceIdGenerator<TId> : IIdGenerator<TId> 

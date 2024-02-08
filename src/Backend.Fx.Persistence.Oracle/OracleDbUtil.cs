@@ -1,10 +1,11 @@
-// using System.Data;
+using System.Data;
+using Backend.Fx.Persistence.AdoNet;
+
+namespace Backend.Fx.Persistence.Oracle;
 //
-// namespace Backend.Fx.Persistence.AdoNet.Oracle;
-//
-// public class OracleUtil : DbUtil
+// public class OracleDbUtil : AdoNetDbUtil
 // {
-//     public OracleUtil(IDbConnectionFactory dbConnectionFactory) : base(dbConnectionFactory)
+//     public OracleDbUtil(IDbConnectionFactory dbConnectionFactory) : base(dbConnectionFactory)
 //     {
 //     }
 //

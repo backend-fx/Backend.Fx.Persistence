@@ -1,7 +1,6 @@
-using Backend.Fx.Persistence.IdGeneration;
 using JetBrains.Annotations;
 
-namespace Backend.Fx.Persistence.InMem;
+namespace Backend.Fx.Persistence.Sequences;
 
 [PublicAPI]
 public class InMemorySequence : ISequence<int>

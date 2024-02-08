@@ -68,7 +68,7 @@ public class DbTransactionOperationDecorator : IOperation
         _logger.LogDebug("Committing transaction");
         _currentTransactionHolder.Current.Commit();
         _currentTransactionHolder.Current.Dispose();
-        _currentTransactionHolder.ReplaceCurrent(null);
+        _currentTransactionHolder.ReplaceCurrent(null!);
         _transactionLifetimeLogger?.Dispose();
         _transactionLifetimeLogger = null;
         if (_shouldHandleConnectionState)
@@ -92,7 +92,7 @@ public class DbTransactionOperationDecorator : IOperation
 
         _currentTransactionHolder.Current.Rollback();
         _currentTransactionHolder.Current.Dispose();
-        _currentTransactionHolder.ReplaceCurrent(null);
+        _currentTransactionHolder.ReplaceCurrent(null!);
 
         _transactionLifetimeLogger?.Dispose();
         _transactionLifetimeLogger = null;

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Data;
 using Backend.Fx.Logging;
+using Backend.Fx.Persistence.AdoNet;
 using Backend.Fx.Persistence.IdGeneration;
-using JetBrains.Annotations;
+using Backend.Fx.Persistence.Sequences;
 using Microsoft.Extensions.Logging;
 
-namespace Backend.Fx.Persistence.AdoNet.Oracle;
+namespace Backend.Fx.Persistence.Oracle.Sequences;
 
 public abstract class OracleSequence<TId> : ISequence<TId> 
 {
@@ -82,32 +83,4 @@ public abstract class OracleSequence<TId> : ISequence<TId>
     public abstract TId Increment { get; }
         
     protected abstract TId ConvertNextValueFromSequence(object valueFromSequence);
-}
-    
-[PublicAPI]
-public abstract class OracleIntSequence : OracleSequence<int>
-{
-    protected OracleIntSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1) 
-        : base(dbConnectionFactory, startWith)
-    {
-    }
-
-    protected override int ConvertNextValueFromSequence(object valueFromSequence)
-    {
-        return Convert.ToInt32(valueFromSequence);
-    }
-}
-    
-[PublicAPI]
-public abstract class OracleLongSequence : OracleSequence<long>
-{
-    protected OracleLongSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1) 
-        : base(dbConnectionFactory, startWith)
-    {
-    }
-
-    protected override long ConvertNextValueFromSequence(object valueFromSequence)
-    {
-        return Convert.ToInt64(valueFromSequence);
-    }
 }

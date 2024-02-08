@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Data;
 using Backend.Fx.Logging;
-using Backend.Fx.Persistence.IdGeneration;
+using Backend.Fx.Persistence.AdoNet;
+using Backend.Fx.Persistence.Sequences;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
-namespace Backend.Fx.Persistence.AdoNet.MsSql;
+namespace Backend.Fx.Persistence.MsSql.Sequences;
 
 [PublicAPI]
 public abstract class MsSqlSequence<TId> : ISequence<TId>
@@ -72,32 +73,4 @@ public abstract class MsSqlSequence<TId> : ISequence<TId>
     public abstract TId Increment { get; }
 
     protected abstract TId ConvertNextValueFromSequence(object valueFromSequence);
-}
-
-[PublicAPI]
-public abstract class MsSqlIntSequence : MsSqlSequence<int>
-{
-    protected MsSqlIntSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
-        : base(dbConnectionFactory, startWith)
-    {
-    }
-
-    protected override int ConvertNextValueFromSequence(object valueFromSequence)
-    {
-        return Convert.ToInt32(valueFromSequence);
-    }
-}
-
-[PublicAPI]
-public abstract class MsSqlLongSequence : MsSqlSequence<long>
-{
-    protected MsSqlLongSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
-        : base(dbConnectionFactory, startWith)
-    {
-    }
-
-    protected override long ConvertNextValueFromSequence(object valueFromSequence)
-    {
-        return Convert.ToInt64(valueFromSequence);
-    }
 }

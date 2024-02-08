@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Backend.Fx.Logging;
+using Backend.Fx.Persistence.Sequences;
 using Microsoft.Extensions.Logging;
 
 namespace Backend.Fx.Persistence.IdGeneration;

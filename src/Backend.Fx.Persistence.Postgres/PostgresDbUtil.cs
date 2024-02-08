@@ -4,9 +4,9 @@ using JetBrains.Annotations;
 namespace Backend.Fx.Persistence.AdoNet.Postgres;
 
 [PublicAPI]
-public class PostgresUtil : DbUtil
+public class PostgresDbUtil : AdoNetDbUtil
 {
-    public PostgresUtil(IDbConnectionFactory dbConnectionFactory) : base(dbConnectionFactory)
+    public PostgresDbUtil(IDbConnectionFactory dbConnectionFactory) : base(dbConnectionFactory)
     { }
 
     protected override string GetIsAvailableCheckCommand() => "SELECT 1";
