@@ -83,14 +83,17 @@ public class DbTransactionOperationDecorator : IOperation
     public async Task CancelAsync(CancellationToken cancellationToken = default)
     {
         _logger.LogDebug("rolling back transaction");
-        if (_state != TxState.Active)
+        if (_state == TxState.Committed || _state == TxState.RolledBack)
         {
             throw new InvalidOperationException($"Cannot roll back a transaction that is {_state}");
         }
             
         await _operation.CancelAsync(cancellationToken).ConfigureAwait(false);
 
-        _currentTransactionHolder.Current.Rollback();
+        if (_state == TxState.Active)
+        {
+            _currentTransactionHolder.Current.Rollback();
+        }
         _currentTransactionHolder.Current.Dispose();
         _currentTransactionHolder.ReplaceCurrent(null!);
 
