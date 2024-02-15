@@ -1,7 +1,8 @@
 using System.Data;
+using Backend.Fx.Persistence.AdoNet;
 using JetBrains.Annotations;
 
-namespace Backend.Fx.Persistence.AdoNet.Postgres;
+namespace Backend.Fx.Persistence.Postgres;
 
 [PublicAPI]
 public class PostgresDbUtil : AdoNetDbUtil
@@ -27,7 +28,7 @@ public class PostgresDbUtil : AdoNetDbUtil
         using (var termConnCmd = connection.CreateCommand())
         {
             termConnCmd.CommandText =
-                $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{dbName}';";
+                $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{dbName}' AND pid != pg_backend_pid();";
             termConnCmd.ExecuteNonQuery();
         }
 
