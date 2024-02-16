@@ -94,8 +94,7 @@ public class DbTransactionOperationDecorator : IOperation
         {
             _currentTransactionHolder.Current.Rollback();
         }
-        _currentTransactionHolder.Current.Dispose();
-        _currentTransactionHolder.ReplaceCurrent(null!);
+        _currentTransactionHolder.ClearCurrent();
 
         _transactionLifetimeLogger?.Dispose();
         _transactionLifetimeLogger = null;
