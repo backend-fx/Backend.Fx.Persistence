@@ -59,6 +59,7 @@ public abstract class DatabaseAvailabilityAwaiter : IDatabaseAvailabilityAwaiter
             {
                 await ConnectToDatabaseAsync(cancellationToken);
                 _logger.LogInformation("Database is available");
+                return;
             }
             catch (Exception ex)
             {
