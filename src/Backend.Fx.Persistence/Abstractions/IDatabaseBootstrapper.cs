@@ -12,6 +12,17 @@ namespace Backend.Fx.Persistence.Abstractions;
 public interface IDatabaseBootstrapper : IDisposable
 {
     Task EnsureDatabaseExistenceAsync(CancellationToken cancellationToken);
+
+    public DatabaseState State { get; }
+
+
+    public enum DatabaseState
+    {
+        NotAvailableYet,
+        BootStrapping,
+        BootstrappingFailed,
+        Ready,
+    }
 }
 
 [PublicAPI]
@@ -20,21 +31,22 @@ public abstract class DatabaseBootstrapper(IDatabaseAvailabilityAwaiter database
 {
     public IDatabaseAvailabilityAwaiter DatabaseAvailabilityAwaiter { get; } = databaseAvailabilityAwaiter;
 
-    public DatabaseState State { get; private set; } = DatabaseState.NotAvailableYet;
+    public IDatabaseBootstrapper.DatabaseState State { get; private set; } =
+        IDatabaseBootstrapper.DatabaseState.NotAvailableYet;
 
     public async Task EnsureDatabaseExistenceAsync(CancellationToken cancellationToken)
     {
         await DatabaseAvailabilityAwaiter.WaitForDatabaseAsync(cancellationToken);
-        State = DatabaseState.BootStrapping;
+        State = IDatabaseBootstrapper.DatabaseState.BootStrapping;
 
         try
         {
             await EnsureDatabaseExistenceWhenDatabaseIsAvailableAsync(cancellationToken);
-            State = DatabaseState.Ready;
+            State = IDatabaseBootstrapper.DatabaseState.Ready;
         }
         catch
         {
-            State = DatabaseState.BootstrappingFailed;
+            State = IDatabaseBootstrapper.DatabaseState.BootstrappingFailed;
             throw;
         }
     }
@@ -49,14 +61,5 @@ public abstract class DatabaseBootstrapper(IDatabaseAvailabilityAwaiter database
     {
         Dispose(true);
         GC.SuppressFinalize(this);
-    }
-
-
-    public enum DatabaseState
-    {
-        NotAvailableYet,
-        BootStrapping,
-        BootstrappingFailed,
-        Ready,
     }
 }
