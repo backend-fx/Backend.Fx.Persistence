@@ -23,7 +23,7 @@
 
     <ItemGroup>
         <PackageReference Include="Backend.Fx" Version="8.0.7"/>
-        <PackageReference Include="Backend.Fx.Execution.Abstractions" Version="1.0.0"/>
+        <PackageReference Include="Backend.Fx.Execution.Abstractions" Version="1.0.6" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
     </ItemGroup>
 
