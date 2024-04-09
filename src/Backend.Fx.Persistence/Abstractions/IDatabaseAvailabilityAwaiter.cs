@@ -38,11 +38,11 @@ public abstract class DatabaseAvailabilityAwaiter : IDatabaseAvailabilityAwaiter
             {
                 if (timeoutEnd < SystemClock.Instance.GetCurrentInstant())
                 {
-                    Console.WriteLine($@"Database not yet ready ({ex.Message}) - aborting");
+                    _logger.LogError($@"Database not yet ready ({ex.Message}) - aborting");
                     throw;
                 }
 
-                Console.WriteLine($@"Database not yet ready ({ex.Message}) - retrying...");
+                _logger.LogInformation($@"Database not yet ready ({ex.Message}) - retrying...");
                 Thread.Sleep(3000);
             }
         }
@@ -65,11 +65,11 @@ public abstract class DatabaseAvailabilityAwaiter : IDatabaseAvailabilityAwaiter
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    Console.WriteLine($"Database not yet ready ({ex.Message}) - aborting");
+                    _logger.LogError($"Database not yet ready ({ex.Message}) - aborting");
                     throw;
                 }
 
-                Console.WriteLine($"Database not yet ready ({ex.Message}) - retrying...");
+                _logger.LogInformation($"Database not yet ready ({ex.Message}) - retrying...");
                 await Task.Delay(3000, cancellationToken);
             }
         }
