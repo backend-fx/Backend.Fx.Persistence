@@ -22,12 +22,12 @@ public abstract class HiLoIdGenerator<TId> : IIdGenerator<TId>
 
     protected abstract TId GetNextId();
 
-
     protected abstract TId GetNextBlockStart();
 
     protected abstract TId BlockSize { get; }
 }
-    
+
+
 [PublicAPI]
 public abstract class HiLoIntIdGenerator : HiLoIdGenerator<int>
 {
@@ -41,14 +41,13 @@ public abstract class HiLoIntIdGenerator : HiLoIdGenerator<int>
         _isTraceEnabled = _logger.IsEnabled(LogLevel.Trace);
     }
 
-
     protected override void EnsureValidLowAndHiId()
     {
         if (_lowId == -1 || _lowId > _highId)
         {
-            // first fetch from sequence in life time
+            // first fetch from sequence in lifetime
             _lowId = GetNextBlockStart();
-            _highId = _lowId + BlockSize- 1;
+            _highId = _lowId + BlockSize - 1;
         }
     }
 
@@ -60,7 +59,8 @@ public abstract class HiLoIntIdGenerator : HiLoIdGenerator<int>
         return nextId;
     }
 }
-    
+
+
 [PublicAPI]
 public abstract class HiLoLongIdGenerator : HiLoIdGenerator<long>
 {
@@ -74,14 +74,13 @@ public abstract class HiLoLongIdGenerator : HiLoIdGenerator<long>
         _isTraceEnabled = _logger.IsEnabled(LogLevel.Trace);
     }
 
-
     protected override void EnsureValidLowAndHiId()
     {
         if (_lowId == -1 || _lowId > _highId)
         {
             // first fetch from sequence in life time
             _lowId = GetNextBlockStart();
-            _highId = _lowId + BlockSize- 1;
+            _highId = _lowId + BlockSize - 1;
         }
     }
 

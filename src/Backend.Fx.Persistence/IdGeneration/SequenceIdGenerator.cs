@@ -1,8 +1,10 @@
 using Backend.Fx.Persistence.Sequences;
+using JetBrains.Annotations;
 
 namespace Backend.Fx.Persistence.IdGeneration;
 
-public class SequenceIdGenerator<TId> : IIdGenerator<TId> 
+[PublicAPI]
+public class SequenceIdGenerator<TId> : IIdGenerator<TId>
 {
     private readonly ISequence<TId> _sequence;
 

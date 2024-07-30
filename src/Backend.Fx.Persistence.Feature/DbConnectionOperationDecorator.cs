@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Backend.Fx.Persistence.AdoNet;
+namespace Backend.Fx.Persistence.Feature;
 
 [UsedImplicitly]
 public class DbConnectionOperationDecorator : IOperation
@@ -46,7 +46,7 @@ public class DbConnectionOperationDecorator : IOperation
         _logger.LogDebug("Closing database connection");
         _dbConnection.Close();
         _connectionLifetimeLogger?.Dispose();
-            
+
         // note: we do not dispose the DbConnection here, because we did not instantiate it. Disposing is always
         // up to the creator of the instance, that is in this case the injection container.
     }

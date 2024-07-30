@@ -13,7 +13,7 @@ public class SequenceHiLoLongIdGenerator : SequenceHiLoIdGenerator<long>
     private long _highId = -1;
     private long _lowId = -1;
     private readonly bool _isTraceEnabled;
-        
+
     public SequenceHiLoLongIdGenerator(ISequence<long> sequence) : base(sequence)
     {
         _isTraceEnabled = _logger.IsEnabled(LogLevel.Trace);
@@ -23,7 +23,6 @@ public class SequenceHiLoLongIdGenerator : SequenceHiLoIdGenerator<long>
     {
         if (_lowId == -1 || _lowId > _highId)
         {
-            // first fetch from sequence in life time
             _lowId = GetNextBlockStart();
             _highId = _lowId + BlockSize- 1;
         }
