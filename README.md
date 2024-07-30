@@ -6,13 +6,13 @@ This library addresses recurring challenges when dealing with any sort of persis
 
 By implementing an `IDatabaseAvailabilityAwaiter` the application boot is delayed until the database is responding properly. Some database specific implementations are already provided.
 
-### Creating annd migration database
+### Creating and migration database
 
 The interface `IDatabaseBootstrapper` is the foundation for a controlled database creation and migration step during application boot. Implement it with your preferred technique, no matter if it's Entity Framework Migrations, FluentMigrator or any other tooling.
 
 The application boot is delayed until the database is bootstrapped.
 
-Check out the `AdoNetDbUtil` and their concrete implementations for specific database system to do the heavy lifting of creating and dropping databases.
+> Check out the `AdoNetDbUtil` and their concrete implementations for specific database system to do the heavy lifting of creating and dropping databases.
 
 ### Id Generation
 
@@ -20,7 +20,7 @@ The [Hi/Lo algorithm](https://en.wikipedia.org/wiki/Hi/Lo_algorithm) using a dat
 
 That way you can follow the DDD approach of giving identities to each entity during creation without the cost of maintaining many short lived database connections asking a sequence for each and every new id.
 
-Classes to abstract away sequence generation and access are available for different database management systems.
+> Classes to abstract away sequence generation and access are available for different database management systems.
 
 ## Getting started
 
