@@ -12,6 +12,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.MsSq
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.Feature", "Backend.Fx.Persistence.Feature\Backend.Fx.Persistence.Feature.csproj", "{53005E36-88A6-42A3-8A86-1964751EE755}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1E541D22-BC78-4159-9E4E-A48BB6B9B12C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.Tests", "tests\Backend.Fx.Persistence.Tests\Backend.Fx.Persistence.Tests.csproj", "{1737507D-1F3E-439B-9A50-95E3EEF1D8A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,5 +44,12 @@ Global
 		{53005E36-88A6-42A3-8A86-1964751EE755}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53005E36-88A6-42A3-8A86-1964751EE755}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53005E36-88A6-42A3-8A86-1964751EE755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1737507D-1F3E-439B-9A50-95E3EEF1D8A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1737507D-1F3E-439B-9A50-95E3EEF1D8A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1737507D-1F3E-439B-9A50-95E3EEF1D8A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1737507D-1F3E-439B-9A50-95E3EEF1D8A9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1737507D-1F3E-439B-9A50-95E3EEF1D8A9} = {1E541D22-BC78-4159-9E4E-A48BB6B9B12C}
 	EndGlobalSection
 EndGlobal

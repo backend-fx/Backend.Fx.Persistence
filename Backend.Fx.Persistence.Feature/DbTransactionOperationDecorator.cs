@@ -20,7 +20,6 @@ public class DbTransactionOperationDecorator : IOperation
     private readonly IDbConnection _dbConnection;
     private readonly ICurrentTHolder<IDbTransaction> _currentTransactionHolder;
     private readonly IOperation _operation;
-    private bool _shouldHandleConnectionState;
     private IsolationLevel _isolationLevel = IsolationLevel.Unspecified;
     private IDisposable? _transactionLifetimeLogger;
     private TxState _state = TxState.NotStarted;
@@ -40,13 +39,6 @@ public class DbTransactionOperationDecorator : IOperation
         if (_state != TxState.NotStarted)
         {
             throw new InvalidOperationException("A Transaction has been started by this operation before.");
-        }
-
-        _shouldHandleConnectionState = ShouldHandleConnectionState();
-        if (_shouldHandleConnectionState)
-        {
-            _logger.LogDebug("Opening connection");
-            _dbConnection.Open();
         }
 
         _logger.LogDebug("Beginning transaction");
@@ -71,11 +63,6 @@ public class DbTransactionOperationDecorator : IOperation
         _currentTransactionHolder.ReplaceCurrent(null!);
         _transactionLifetimeLogger?.Dispose();
         _transactionLifetimeLogger = null;
-        if (_shouldHandleConnectionState)
-        {
-            _logger.LogDebug("Closing connection");
-            _dbConnection.Close();
-        }
 
         _state = TxState.Committed;
     }
@@ -99,10 +86,6 @@ public class DbTransactionOperationDecorator : IOperation
 
         _transactionLifetimeLogger?.Dispose();
         _transactionLifetimeLogger = null;
-        if (_shouldHandleConnectionState)
-        {
-            _dbConnection.Close();
-        }
 
         _state = TxState.RolledBack;
     }
@@ -116,20 +99,6 @@ public class DbTransactionOperationDecorator : IOperation
         }
 
         _isolationLevel = isolationLevel;
-    }
-
-    private bool ShouldHandleConnectionState()
-    {
-        switch (_dbConnection.State)
-        {
-            case ConnectionState.Closed:
-                return true;
-            case ConnectionState.Open:
-                return false;
-            default:
-                throw new InvalidOperationException(
-                    $"A connection provided to the operation must either be closed or open, but must not be {_dbConnection.State}");
-        }
     }
 
 
