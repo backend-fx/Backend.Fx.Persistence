@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Backend.Fx.Persistence.Feature\Backend.Fx.Persistence.Feature.csproj" />
+      <ProjectReference Include="..\..\src\Backend.Fx.Persistence.Feature\Backend.Fx.Persistence.Feature.csproj" />
       <ProjectReference Include="..\..\src\Backend.Fx.Persistence\Backend.Fx.Persistence.csproj" />
     </ItemGroup>
 

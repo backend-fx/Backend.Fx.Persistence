@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.Post
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.MsSql", "src\Backend.Fx.Persistence.MsSql\Backend.Fx.Persistence.MsSql.csproj", "{82C133A0-4A43-4756-963D-A2FF5686D6EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.Feature", "Backend.Fx.Persistence.Feature\Backend.Fx.Persistence.Feature.csproj", "{53005E36-88A6-42A3-8A86-1964751EE755}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.Feature", "src\Backend.Fx.Persistence.Feature\Backend.Fx.Persistence.Feature.csproj", "{53005E36-88A6-42A3-8A86-1964751EE755}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1E541D22-BC78-4159-9E4E-A48BB6B9B12C}"
 EndProject
