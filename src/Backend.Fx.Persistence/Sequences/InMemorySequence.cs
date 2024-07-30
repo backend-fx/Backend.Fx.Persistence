@@ -11,9 +11,6 @@ public class InMemorySequence : ISequence<int>
     {
         Increment = increment;
     }
-        
-    public void EnsureSequence()
-    { }
 
     public int GetNextValue()
     {

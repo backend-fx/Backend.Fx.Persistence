@@ -5,17 +5,15 @@ using System.Threading.Tasks;
 using Backend.Fx.Execution.Pipeline;
 using Backend.Fx.Logging;
 using Backend.Fx.Util;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Backend.Fx.Persistence.AdoNet;
+namespace Backend.Fx.Persistence.Feature;
 
 /// <summary>
 /// Enriches the operation to use a database transaction during lifetime. The transaction gets started, before IOperation.Begin()
 /// is being called and gets committed after IOperation.Complete() is being called.
 /// </summary>
-[PublicAPI]
 public class DbTransactionOperationDecorator : IOperation
 {
     private readonly ILogger _logger = Log.Create<DbTransactionOperationDecorator>();
@@ -26,16 +24,18 @@ public class DbTransactionOperationDecorator : IOperation
     private IsolationLevel _isolationLevel = IsolationLevel.Unspecified;
     private IDisposable? _transactionLifetimeLogger;
     private TxState _state = TxState.NotStarted;
-        
-    public DbTransactionOperationDecorator(IDbConnection dbConnection, ICurrentTHolder<IDbTransaction> currentTransactionHolder, IOperation operation)
+
+    public DbTransactionOperationDecorator(
+        IDbConnection dbConnection,
+        ICurrentTHolder<IDbTransaction> currentTransactionHolder,
+        IOperation operation)
     {
         _dbConnection = dbConnection;
         _currentTransactionHolder = currentTransactionHolder;
         _operation = operation;
     }
 
-
-    public virtual Task BeginAsync(IServiceScope serviceScope, CancellationToken cancellationToken = default)
+    public Task BeginAsync(IServiceScope serviceScope, CancellationToken cancellationToken = default)
     {
         if (_state != TxState.NotStarted)
         {
@@ -87,13 +87,14 @@ public class DbTransactionOperationDecorator : IOperation
         {
             throw new InvalidOperationException($"Cannot roll back a transaction that is {_state}");
         }
-            
+
         await _operation.CancelAsync(cancellationToken).ConfigureAwait(false);
 
         if (_state == TxState.Active)
         {
             _currentTransactionHolder.Current.Rollback();
         }
+
         _currentTransactionHolder.ClearCurrent();
 
         _transactionLifetimeLogger?.Dispose();
@@ -105,17 +106,18 @@ public class DbTransactionOperationDecorator : IOperation
 
         _state = TxState.RolledBack;
     }
-        
+
     public void SetIsolationLevel(IsolationLevel isolationLevel)
     {
         if (_state != TxState.NotStarted)
         {
-            throw new InvalidOperationException("Isolation level cannot be changed after the transaction has been started");
+            throw new InvalidOperationException(
+                "Isolation level cannot be changed after the transaction has been started");
         }
 
         _isolationLevel = isolationLevel;
     }
-        
+
     private bool ShouldHandleConnectionState()
     {
         switch (_dbConnection.State)
@@ -125,10 +127,12 @@ public class DbTransactionOperationDecorator : IOperation
             case ConnectionState.Open:
                 return false;
             default:
-                throw new InvalidOperationException($"A connection provided to the operation must either be closed or open, but must not be {_dbConnection.State}");
+                throw new InvalidOperationException(
+                    $"A connection provided to the operation must either be closed or open, but must not be {_dbConnection.State}");
         }
     }
-        
+
+
     private enum TxState
     {
         NotStarted,

@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.Post
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.MsSql", "src\Backend.Fx.Persistence.MsSql\Backend.Fx.Persistence.MsSql.csproj", "{82C133A0-4A43-4756-963D-A2FF5686D6EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Fx.Persistence.Feature", "Backend.Fx.Persistence.Feature\Backend.Fx.Persistence.Feature.csproj", "{53005E36-88A6-42A3-8A86-1964751EE755}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,5 +36,9 @@ Global
 		{82C133A0-4A43-4756-963D-A2FF5686D6EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82C133A0-4A43-4756-963D-A2FF5686D6EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82C133A0-4A43-4756-963D-A2FF5686D6EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53005E36-88A6-42A3-8A86-1964751EE755}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53005E36-88A6-42A3-8A86-1964751EE755}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53005E36-88A6-42A3-8A86-1964751EE755}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53005E36-88A6-42A3-8A86-1964751EE755}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

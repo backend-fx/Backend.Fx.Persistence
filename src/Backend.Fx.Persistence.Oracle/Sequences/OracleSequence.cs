@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Backend.Fx.Persistence.Oracle.Sequences;
 
-public abstract class OracleSequence<TId> : ISequence<TId> 
+public abstract class OracleSequence<TId> : ISequence<TId>
 {
     private readonly ILogger _logger = Log.Create<OracleSequence<TId>>();
     private readonly IDbConnectionFactory _dbConnectionFactory;
@@ -21,6 +21,7 @@ public abstract class OracleSequence<TId> : ISequence<TId>
     }
 
     protected abstract string SequenceName { get; }
+
     protected abstract string SchemaName { get; }
 
     private string SchemaPrefix
@@ -35,7 +36,8 @@ public abstract class OracleSequence<TId> : ISequence<TId>
 
     public void EnsureSequence()
     {
-        _logger.LogInformation("Ensuring existence of oracle sequence {SchemaPrefix}.{SequenceName}", SchemaPrefix, SequenceName);
+        _logger.LogInformation(
+            "Ensuring existence of oracle sequence {SchemaPrefix}.{SequenceName}", SchemaPrefix, SequenceName);
 
         using IDbConnection dbConnection = _dbConnectionFactory.Create();
         dbConnection.Open();
@@ -52,11 +54,13 @@ public abstract class OracleSequence<TId> : ISequence<TId>
         }
         else
         {
-            _logger.LogInformation("Oracle sequence {SchemaPrefix}.{SequenceName} does not exist yet and will be created now",
+            _logger.LogInformation(
+                "Oracle sequence {SchemaPrefix}.{SequenceName} does not exist yet and will be created now",
                 SchemaPrefix,
                 SequenceName);
             using IDbCommand cmd = dbConnection.CreateCommand();
-            cmd.CommandText = $"CREATE SEQUENCE {SchemaPrefix}{SequenceName} START WITH {_startWith} INCREMENT BY {Increment}";
+            cmd.CommandText
+                = $"CREATE SEQUENCE {SchemaPrefix}{SequenceName} START WITH {_startWith} INCREMENT BY {Increment}";
             cmd.ExecuteNonQuery();
             _logger.LogInformation("Oracle sequence {SchemaPrefix}.{SequenceName} created", SchemaPrefix, SequenceName);
         }
@@ -72,7 +76,8 @@ public abstract class OracleSequence<TId> : ISequence<TId>
         TId nextValue = ConvertNextValueFromSequence(
             command.ExecuteScalar()
             ?? throw new InvalidOperationException("Getting next value from sequence returned NULL"));
-        _logger.LogDebug("Oracle sequence {SchemaPrefix}.{SequenceName} served {NextValue} as next value",
+        _logger.LogDebug(
+            "Oracle sequence {SchemaPrefix}.{SequenceName} served {NextValue} as next value",
             SchemaPrefix,
             SequenceName,
             nextValue);
@@ -81,6 +86,6 @@ public abstract class OracleSequence<TId> : ISequence<TId>
     }
 
     public abstract TId Increment { get; }
-        
+
     protected abstract TId ConvertNextValueFromSequence(object valueFromSequence);
 }

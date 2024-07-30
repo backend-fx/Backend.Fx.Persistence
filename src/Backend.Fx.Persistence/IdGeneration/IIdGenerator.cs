@@ -1,6 +1,9 @@
-﻿namespace Backend.Fx.Persistence.IdGeneration;
+﻿using JetBrains.Annotations;
 
-public interface IIdGenerator<out TId> 
+namespace Backend.Fx.Persistence.IdGeneration;
+
+[PublicAPI]
+public interface IIdGenerator<out TId>
 {
     TId NextId();
 }
