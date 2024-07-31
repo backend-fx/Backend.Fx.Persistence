@@ -77,15 +77,24 @@ public class ThePersistenceFeature
     [Fact]
     public async Task MaintainsConnectionAndTransactionOnOperations()
     {
-        await _app.BootAsync();
-        await _app.Invoker.InvokeAsync((_, _) => Task.CompletedTask);
+        var whatever = A.Fake<IFormattable>();
 
-        A.CallTo(() => _dbConnection.Open()).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbConnection.BeginTransaction(A<IsolationLevel>._)).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbTransaction.Commit()).MustHaveHappenedOnceExactly();
+        await _app.BootAsync();
+        await _app.Invoker.InvokeAsync(
+            (_, _) =>
+            {
+                var unused = whatever.ToString();
+                return Task.CompletedTask;
+            });
+
+        A.CallTo(() => _dbConnection.Open()).MustHaveHappenedOnceExactly()
+            .Then(A.CallTo(() => _dbConnection.BeginTransaction(A<IsolationLevel>._)).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => whatever.ToString()).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => _dbTransaction.Commit()).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => _dbConnection.Close()).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => _dbConnection.Dispose()).MustHaveHappened());
+
         A.CallTo(() => _dbTransaction.Rollback()).MustNotHaveHappened();
-        A.CallTo(() => _dbConnection.Close()).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbConnection.Dispose()).MustHaveHappened();
     }
 
     [Fact]
@@ -95,26 +104,34 @@ public class ThePersistenceFeature
         await Assert.ThrowsAsync<DivideByZeroException>(
             async () => await _app.Invoker.InvokeAsync((_, _) => throw new DivideByZeroException()));
 
-        A.CallTo(() => _dbConnection.Open()).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbConnection.BeginTransaction(A<IsolationLevel>._)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _dbConnection.Open()).MustHaveHappenedOnceExactly()
+            .Then(A.CallTo(() => _dbConnection.BeginTransaction(A<IsolationLevel>._)).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => _dbTransaction.Rollback()).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => _dbConnection.Close()).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => _dbConnection.Dispose()).MustHaveHappened());
+
         A.CallTo(() => _dbTransaction.Commit()).MustNotHaveHappened();
-        A.CallTo(() => _dbTransaction.Rollback()).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbConnection.Close()).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbConnection.Dispose()).MustHaveHappened();
     }
 
     [Fact]
     public async Task AllowsDisablingTransactions()
     {
+        var whatever = A.Fake<IFormattable>();
         var app = new TestApplication(
             _dbConnectionFactory, _databaseAvailabilityAwaiter, _databaseBootstrapper, enableTransactions: false);
         await app.BootAsync();
 
-        await app.Invoker.InvokeAsync((_, _) => Task.CompletedTask);
+        await app.Invoker.InvokeAsync(
+            (_, _) =>
+            {
+                var unused = whatever.ToString();
+                return Task.CompletedTask;
+            });
 
-        A.CallTo(() => _dbConnection.Open()).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbConnection.Close()).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbConnection.Dispose()).MustHaveHappened();
+        A.CallTo(() => _dbConnection.Open()).MustHaveHappenedOnceExactly()
+            .Then(A.CallTo(() => whatever.ToString()).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => _dbConnection.Close()).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => _dbConnection.Dispose()).MustHaveHappened());
 
         A.CallTo(() => _dbConnection.BeginTransaction(A<IsolationLevel>._)).MustNotHaveHappened();
         A.CallTo(() => _dbTransaction.Commit()).MustNotHaveHappened();
@@ -131,9 +148,9 @@ public class ThePersistenceFeature
         await Assert.ThrowsAsync<DivideByZeroException>(
             async () => await app.Invoker.InvokeAsync((_, _) => throw new DivideByZeroException()));
 
-        A.CallTo(() => _dbConnection.Open()).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbConnection.Close()).MustHaveHappenedOnceExactly();
-        A.CallTo(() => _dbConnection.Dispose()).MustHaveHappened();
+        A.CallTo(() => _dbConnection.Open()).MustHaveHappenedOnceExactly()
+            .Then(A.CallTo(() => _dbConnection.Close()).MustHaveHappenedOnceExactly())
+            .Then(A.CallTo(() => _dbConnection.Dispose()).MustHaveHappened());
 
         A.CallTo(() => _dbConnection.BeginTransaction(A<IsolationLevel>._)).MustNotHaveHappened();
         A.CallTo(() => _dbTransaction.Commit()).MustNotHaveHappened();

@@ -18,9 +18,6 @@ public class PersistenceModule(IDbConnectionFactory dbConnectionFactory, bool en
         compositionRoot.Register(
             ServiceDescriptor.Scoped<IDbConnection>(sp => sp.GetRequiredService<IDbConnectionFactory>().Create()));
 
-        // decorator: automatic connection opening and closing
-        compositionRoot.RegisterDecorator(ServiceDescriptor.Scoped<IOperation, DbConnectionOperationDecorator>());
-
         if (enableTransactions)
         {
             // decorator: automatic transactions
@@ -28,5 +25,8 @@ public class PersistenceModule(IDbConnectionFactory dbConnectionFactory, bool en
                 ServiceDescriptor.Scoped<ICurrentTHolder<IDbTransaction>, CurrentDbTransactionHolder>());
             compositionRoot.RegisterDecorator(ServiceDescriptor.Scoped<IOperation, DbTransactionOperationDecorator>());
         }
+
+        // decorator: automatic connection opening and closing
+        compositionRoot.RegisterDecorator(ServiceDescriptor.Scoped<IOperation, DbConnectionOperationDecorator>());
     }
 }
