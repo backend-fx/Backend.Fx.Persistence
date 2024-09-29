@@ -1,8 +1,8 @@
-name: continuous
+name: release
 
 on:
   push:
-    tags: 
+    tags:
       - "v*.*.*"
 
 jobs:
