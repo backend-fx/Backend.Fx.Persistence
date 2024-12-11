@@ -51,33 +51,6 @@ public class PersistenceFeature : Execution.Features.Feature, IBootableFeature
         _databaseBootstrapper = databaseBootstrapper ?? new NullDatabaseBootstrapper();
     }
 
-    /// <summary>
-    /// Adds an id generator type as singleton to the DI container. All dependent services must be available as singleton
-    /// in the container, too.
-    /// </summary>
-    /// <typeparam name="TIdGenerator"></typeparam>
-    /// <typeparam name="TId"></typeparam>
-    /// <returns></returns>
-    public PersistenceFeature AddIdGenerator<TIdGenerator, TId>() where TIdGenerator : class, IIdGenerator<TId>
-    {
-        Logger.LogInformation("Adding generator for {IdType}s", typeof(TId).Name);
-        _idGenerationModules.Add(new IdGenerationModule<TIdGenerator, TId>());
-        return this;
-    }
-
-    /// <summary>
-    /// Adds an id generator instance as singleton to the DI container.
-    /// </summary>
-    /// <param name="idGenerator"></param>
-    /// <typeparam name="TId"></typeparam>
-    /// <returns></returns>
-    public PersistenceFeature AddIdGenerator<TId>(IIdGenerator<TId> idGenerator)
-    {
-        Logger.LogInformation("Adding generator for {IdType}s", typeof(TId).Name);
-        _idGenerationModules.Add(new IdGenerationModule<TId>(idGenerator));
-        return this;
-    }
-
     public override void Enable(IBackendFxApplication application)
     {
         Logger.LogInformation("Enabling persistence for the {ApplicationName}", application.GetType().Name);

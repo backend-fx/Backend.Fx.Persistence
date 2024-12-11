@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace Backend.Fx.Persistence.IdGeneration;
 
 [PublicAPI]
-public class SequenceIdGenerator<TId> : IIdGenerator<TId>
+public class SequenceIdGenerator<TId>
 {
     private readonly ISequence<TId> _sequence;
 

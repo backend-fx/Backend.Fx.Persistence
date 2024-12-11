@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Backend.Fx.Persistence.IdGeneration;
 
-public abstract class HiLoIdGenerator<TId> : IIdGenerator<TId>
+public abstract class HiLoIdGenerator<TId>
 {
     private readonly object _mutex = new();
 
