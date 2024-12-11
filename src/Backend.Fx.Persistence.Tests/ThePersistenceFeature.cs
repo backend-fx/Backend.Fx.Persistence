@@ -4,9 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Backend.Fx.Persistence.Abstractions;
 using Backend.Fx.Persistence.AdoNet;
-using Backend.Fx.Persistence.IdGeneration;
 using FakeItEasy;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Backend.Fx.Persistence.Tests;
@@ -55,18 +53,6 @@ public class ThePersistenceFeature
     }
 
     [Fact]
-    public async Task CanAddIdGenerators()
-    {
-        await _app.BootAsync();
-
-        var thisIdGenerator = _app.CompositionRoot.ServiceProvider.GetRequiredService<IIdGenerator<ThisId>>();
-        Assert.IsType<ThisIdGenerator>(thisIdGenerator);
-
-        var thatIdGenerator = _app.CompositionRoot.ServiceProvider.GetRequiredService<IIdGenerator<ThatId>>();
-        Assert.IsType<ThatIdGenerator>(thatIdGenerator);
-    }
-
-    [Fact]
     public async Task DoesNotOpenAnyConnectionsOnBoot()
     {
         await _app.BootAsync();
@@ -83,7 +69,7 @@ public class ThePersistenceFeature
         await _app.Invoker.InvokeAsync(
             (_, _) =>
             {
-                var unused = whatever.ToString();
+                _ = whatever.ToString();
                 return Task.CompletedTask;
             });
 
@@ -124,7 +110,7 @@ public class ThePersistenceFeature
         await app.Invoker.InvokeAsync(
             (_, _) =>
             {
-                var unused = whatever.ToString();
+                _ = whatever.ToString();
                 return Task.CompletedTask;
             });
 

@@ -8,8 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Backend.Fx.Execution" Version="1.0.20" />
-        <PackageReference Include="Backend.Fx.Execution.SimpleInjector" Version="1.1.0" />
+        <PackageReference Include="Backend.Fx.Ddd" Version="1.1.0" />
+        <PackageReference Include="Backend.Fx.Execution" Version="1.1.1" />
+        <PackageReference Include="Backend.Fx.Execution.SimpleInjector" Version="1.1.1" />
         <PackageReference Include="FakeItEasy" Version="8.3.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
         <PackageReference Include="xunit" Version="2.9.2" />

@@ -47,7 +47,6 @@ public abstract class AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory) : I
         return exists;
     }
 
-
     public virtual bool ExistsTable(string schemaName, string tableName)
     {
         bool exists;
@@ -66,7 +65,6 @@ public abstract class AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory) : I
 
         return exists;
     }
-
 
     public virtual void CreateDatabase(string dbName)
     {
@@ -104,10 +102,10 @@ public abstract class AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory) : I
     protected abstract string GetCreateSchemaCommand(string schemaName);
 
     protected abstract string GetExistsDatabaseCommand(string dbName);
-    
+
     protected abstract void DropDatabase(string dbName, IDbConnection connection);
-    
+
     protected abstract string GetExistsTableCommand(string schemaName, string tableName);
-    
+
     protected abstract string GetCreateDatabaseCommand(string dbName);
 }
