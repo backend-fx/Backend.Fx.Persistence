@@ -20,11 +20,13 @@ public abstract class PostgresSequence<TId> : ISequence<TId>
     }
 
     protected abstract string SequenceName { get; }
+
     protected abstract string SchemaName { get; }
 
     public void EnsureSequence()
     {
-        _logger.LogInformation("Ensuring existence of postgres sequence {SchemaName}.{SequenceName}", SchemaName,
+        _logger.LogInformation(
+            "Ensuring existence of postgres sequence {SchemaName}.{SequenceName}", SchemaName,
             SequenceName);
 
         using IDbConnection dbConnection = _dbConnectionFactory.Create();
