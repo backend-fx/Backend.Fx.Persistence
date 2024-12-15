@@ -41,12 +41,6 @@ public class MyCoolApplication : BackendFxApplication
             /* optional */ databaseBootstrapper,
             /* optional, default: true */ enableTransactions: false);
 
-        // you can add Id generator types using injection (of singletons)...
-        persistenceFeature.AddIdGenerator<ThisIdGenerator, ThisId>();
-
-        // ...or register a ready built instance
-        persistenceFeature.AddIdGenerator(new ThatIdGenerator());
-
         EnableFeature(persistenceFeature);
     }
 }
