@@ -14,9 +14,6 @@ public abstract class PostgresIntSequence : PostgresSequence<int>
 
     protected override int ConvertNextValueFromSequence(object valueFromSequence)
     {
-        return 
-            
-            
-            Convert.ToInt32(valueFromSequence);
+        return Convert.ToInt32(valueFromSequence);
     }
 }
