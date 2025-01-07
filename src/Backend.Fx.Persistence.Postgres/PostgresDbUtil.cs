@@ -1,6 +1,7 @@
 using System.Data;
 using Backend.Fx.Persistence.AdoNet;
 using JetBrains.Annotations;
+using Npgsql;
 
 namespace Backend.Fx.Persistence.Postgres;
 
@@ -43,4 +44,10 @@ public class PostgresDbUtil : AdoNetDbUtil
         $"SELECT 1 FROM information_schema.tables WHERE table_name = '{tableName}' AND table_schema = '{schemaName}'";
 
     protected override string GetCreateDatabaseCommand(string dbName) => $"CREATE DATABASE \"{dbName}\"";
+
+    public override void EnsureDroppedDatabase(string dbName)
+    {
+        base.EnsureDroppedDatabase(dbName);
+        NpgsqlConnection.ClearAllPools();
+    }
 }

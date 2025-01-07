@@ -25,8 +25,6 @@ public abstract class AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory) : I
             Logger.LogInformation($"Dropping database {dbName}...");
             DropDatabase(dbName, connection);
         }
-
-        //todo? NpgsqlConnection.ClearAllPools();
     }
 
     public virtual bool ExistsDatabase(string dbName)
