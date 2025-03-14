@@ -33,7 +33,9 @@ public abstract class PostgresTestDatabaseBuilder
                 Host = HostName,
                 Port = Port,
                 Username = "postgres",
-                Password = PostgresPassword
+                Password = PostgresPassword,
+                PersistSecurityInfo = true,
+                IncludeErrorDetail = true
             });
     }
 }
