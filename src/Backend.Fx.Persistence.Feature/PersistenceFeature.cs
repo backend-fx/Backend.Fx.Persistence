@@ -8,14 +8,13 @@ using Backend.Fx.Execution.Pipeline;
 using Backend.Fx.Logging;
 using Backend.Fx.Persistence.Abstractions;
 using Backend.Fx.Persistence.AdoNet;
-using Backend.Fx.Persistence.IdGeneration;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
 namespace Backend.Fx.Persistence.Feature;
 
 [PublicAPI]
-public class PersistenceFeature : Execution.Features.Feature, IBootableFeature
+public class PersistenceFeature : IFeature, IBootableFeature
 {
     private static readonly ILogger Logger = Log.Create<PersistenceFeature>();
     private readonly IDbConnectionFactory _dbConnectionFactory;
@@ -51,7 +50,7 @@ public class PersistenceFeature : Execution.Features.Feature, IBootableFeature
         _databaseBootstrapper = databaseBootstrapper ?? new NullDatabaseBootstrapper();
     }
 
-    public override void Enable(IBackendFxApplication application)
+    public void Enable(IBackendFxApplication application)
     {
         Logger.LogInformation("Enabling persistence for the {ApplicationName}", application.GetType().Name);
         application.CompositionRoot.RegisterModules(new PersistenceModule(_dbConnectionFactory, _enableTransactions));

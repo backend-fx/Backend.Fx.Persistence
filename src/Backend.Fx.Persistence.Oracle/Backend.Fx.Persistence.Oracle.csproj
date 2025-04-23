@@ -22,7 +22,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.5.1" />
+        <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.8.0" />
     </ItemGroup>
 
     <ItemGroup>
