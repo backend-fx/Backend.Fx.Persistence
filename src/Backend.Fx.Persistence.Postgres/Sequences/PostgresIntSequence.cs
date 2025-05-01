@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using Backend.Fx.Persistence.AdoNet;
 using JetBrains.Annotations;
 
@@ -7,8 +8,8 @@ namespace Backend.Fx.Persistence.Postgres.Sequences;
 [PublicAPI]
 public abstract class PostgresIntSequence : PostgresSequence<int>
 {
-    protected PostgresIntSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
-        : base(dbConnectionFactory, startWith)
+    protected PostgresIntSequence(DbDataSource dbDataSource, int startWith = 1)
+        : base(dbDataSource, startWith)
     {
     }
 

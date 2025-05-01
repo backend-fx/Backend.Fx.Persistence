@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using Backend.Fx.Logging;
-using Backend.Fx.Persistence.AdoNet;
 using Backend.Fx.Persistence.Sequences;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
@@ -12,23 +12,24 @@ namespace Backend.Fx.Persistence.MsSql.Sequences;
 public abstract class MsSqlSequence<TId> : ISequence<TId>
 {
     private readonly ILogger _logger = Log.Create<MsSqlSequence<TId>>();
-    private readonly IDbConnectionFactory _dbConnectionFactory;
+    private readonly DbDataSource _dbDataSource;
     private readonly int _startWith;
 
-    protected MsSqlSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
+    protected MsSqlSequence(DbDataSource dbDataSource, int startWith = 1)
     {
-        _dbConnectionFactory = dbConnectionFactory;
+        _dbDataSource = dbDataSource;
         _startWith = startWith;
     }
 
     protected abstract string SequenceName { get; }
+
     protected virtual string SchemaName { get; } = "dbo";
 
     public void EnsureSequence()
     {
         _logger.LogInformation("Ensuring existence of mssql sequence {SchemaName}.{SequenceName}", SchemaName,
             SequenceName);
-        using IDbConnection dbConnection = _dbConnectionFactory.Create();
+        using IDbConnection dbConnection = _dbDataSource.CreateConnection();
         dbConnection.Open();
         bool sequenceExists;
         using (IDbCommand cmd = dbConnection.CreateCommand())
@@ -57,7 +58,7 @@ public abstract class MsSqlSequence<TId> : ISequence<TId>
 
     public TId GetNextValue()
     {
-        using IDbConnection dbConnection = _dbConnectionFactory.Create();
+        using IDbConnection dbConnection = _dbDataSource.CreateConnection();
         dbConnection.Open();
         using IDbCommand selectNextValCommand = dbConnection.CreateCommand();
         selectNextValCommand.CommandText = $"SELECT next value FOR {SchemaName}.{SequenceName}";

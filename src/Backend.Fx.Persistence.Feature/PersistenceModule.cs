@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.Common;
 using Backend.Fx.Execution.DependencyInjection;
 using Backend.Fx.Execution.Pipeline;
 using Backend.Fx.Persistence.AdoNet;
@@ -7,16 +8,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.Fx.Persistence.Feature;
 
-public class PersistenceModule(IDbConnectionFactory dbConnectionFactory, bool enableTransactions) : IModule
+public class PersistenceModule(DbDataSource dbDataSource, bool enableTransactions) : IModule
 {
     public void Register(ICompositionRoot compositionRoot)
     {
         // singleton db connection factory
-        compositionRoot.Register(ServiceDescriptor.Singleton(dbConnectionFactory));
+        compositionRoot.Register(ServiceDescriptor.Singleton(dbDataSource));
 
         // scoped db connections are provided by the connection factory
         compositionRoot.Register(
-            ServiceDescriptor.Scoped<IDbConnection>(sp => sp.GetRequiredService<IDbConnectionFactory>().Create()));
+            ServiceDescriptor.Scoped<IDbConnection>(sp => sp.GetRequiredService<DbDataSource>().CreateConnection()));
 
         if (enableTransactions)
         {

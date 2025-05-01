@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using Backend.Fx.Logging;
 using Backend.Fx.Persistence.Abstractions;
 using JetBrains.Annotations;
@@ -7,17 +8,15 @@ using Microsoft.Extensions.Logging;
 namespace Backend.Fx.Persistence.AdoNet;
 
 [PublicAPI]
-public abstract class AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory) : IDbUtil
+public abstract class AdoNetDbUtil(DbDataSource dbDataSource) : IDbUtil
 {
     private static readonly ILogger Logger = Log.Create<AdoNetDbUtil>();
 
-    public string ConnectionString => dbConnectionFactory.ConnectionString;
+    public string ConnectionString => dbDataSource.ConnectionString;
 
     public virtual void EnsureDroppedDatabase(string dbName)
     {
-        using var connection = dbConnectionFactory.Create();
-        connection.Open();
-
+        using var connection = dbDataSource.OpenConnection();
         bool exists = ExistsDatabase(dbName);
 
         if (exists)
@@ -32,9 +31,8 @@ public abstract class AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory) : I
     public virtual bool ExistsDatabase(string dbName)
     {
         bool exists;
-        using (var connection = dbConnectionFactory.Create())
+        using (var connection = dbDataSource.OpenConnection())
         {
-            connection.Open();
             using (var existsCommand = connection.CreateCommand())
             {
                 existsCommand.CommandText = GetExistsDatabaseCommand(dbName);
@@ -51,9 +49,8 @@ public abstract class AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory) : I
     {
         bool exists;
 
-        using (var connection = dbConnectionFactory.Create())
+        using (var connection = dbDataSource.OpenConnection())
         {
-            connection.Open();
             using (var existsCommand = connection.CreateCommand())
             {
                 existsCommand.CommandText = GetExistsTableCommand(schemaName, tableName);
@@ -69,8 +66,7 @@ public abstract class AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory) : I
     public virtual void CreateDatabase(string dbName)
     {
         Logger.LogInformation($"Creating database {dbName}...");
-        using IDbConnection connection = dbConnectionFactory.Create();
-        connection.Open();
+        using IDbConnection connection = dbDataSource.OpenConnection();
 
         using var createCommand = connection.CreateCommand();
         createCommand.CommandText = GetCreateDatabaseCommand(dbName);
@@ -80,8 +76,7 @@ public abstract class AdoNetDbUtil(IDbConnectionFactory dbConnectionFactory) : I
     public virtual void CreateSchema(string schemaName, string? createScriptContent = null)
     {
         Logger.LogInformation($"Creating schema {schemaName}...");
-        using var connection = dbConnectionFactory.Create();
-        connection.Open();
+        using IDbConnection connection = dbDataSource.OpenConnection();
 
         using (var createCommand = connection.CreateCommand())
         {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using Backend.Fx.Logging;
-using Backend.Fx.Persistence.AdoNet;
 using Backend.Fx.Persistence.Sequences;
 using Microsoft.Extensions.Logging;
 
@@ -10,12 +10,12 @@ namespace Backend.Fx.Persistence.Postgres.Sequences;
 public abstract class PostgresSequence<TId> : ISequence<TId>
 {
     private readonly ILogger _logger = Log.Create<PostgresSequence<TId>>();
-    private readonly IDbConnectionFactory _dbConnectionFactory;
+    private readonly DbDataSource _dbDataSource;
     private readonly int _startWith;
 
-    protected PostgresSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
+    protected PostgresSequence(DbDataSource dbDataSource, int startWith = 1)
     {
-        _dbConnectionFactory = dbConnectionFactory;
+        _dbDataSource = dbDataSource;
         _startWith = startWith;
     }
 
@@ -29,7 +29,7 @@ public abstract class PostgresSequence<TId> : ISequence<TId>
             "Ensuring existence of postgres sequence {SchemaName}.{SequenceName}", SchemaName,
             SequenceName);
 
-        using IDbConnection dbConnection = _dbConnectionFactory.Create();
+        using IDbConnection dbConnection = _dbDataSource.CreateConnection();
         dbConnection.Open();
         bool sequenceExists;
         using (IDbCommand command = dbConnection.CreateCommand())
@@ -60,7 +60,7 @@ public abstract class PostgresSequence<TId> : ISequence<TId>
 
     public TId GetNextValue()
     {
-        using IDbConnection dbConnection = _dbConnectionFactory.Create();
+        using IDbConnection dbConnection = _dbDataSource.CreateConnection();
         dbConnection.Open();
 
         using IDbCommand command = dbConnection.CreateCommand();

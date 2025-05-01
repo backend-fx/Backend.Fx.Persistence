@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using Backend.Fx.Persistence.AdoNet;
 using JetBrains.Annotations;
@@ -6,6 +7,7 @@ using Oracle.ManagedDataAccess.Client;
 namespace Backend.Fx.Persistence.Oracle;
 
 [PublicAPI]
+[Obsolete]
 public class OracleConnectionFactory : IDbConnectionFactory
 {
     private readonly OracleConnectionStringBuilder _connectionStringBuilder;
