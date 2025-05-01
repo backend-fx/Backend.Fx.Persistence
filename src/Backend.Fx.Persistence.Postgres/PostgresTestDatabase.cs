@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using Backend.Fx.Persistence.AdoNet;
 using Backend.Fx.Persistence.Postgres.Sequences;
 using JetBrains.Annotations;
@@ -63,14 +64,13 @@ public class PostgresTestDatabase
 
         // use the system connection string to drop and create the database
         {
-            var adminConnectionStringFactory = new PostgresConnectionFactory(connectionStringBuilder);
-            TestDbName = TestDbNameGenerator.GetNextDbName(adminConnectionStringFactory, databaseNamePrefix);
-            var postgresUtil = new PostgresDbUtil(adminConnectionStringFactory);
+            var adminDataSource = NpgsqlDataSource.Create(connectionStringBuilder);
+            TestDbName = TestDbNameGenerator.GetNextDbName(adminDataSource, databaseNamePrefix);
+            var postgresUtil = new PostgresDbUtil(adminDataSource);
             postgresUtil.EnsureDroppedDatabase(TestDbName);
             postgresUtil.CreateDatabase(TestDbName);
 
-            using var dbConnection = adminConnectionStringFactory.Create();
-            dbConnection.Open();
+            using var dbConnection = adminDataSource.OpenConnection();
             using var cmd = dbConnection.CreateCommand();
             cmd.CommandText = $"GRANT ALL PRIVILEGES ON DATABASE {TestDbName} TO {username};";
             cmd.ExecuteNonQuery();
@@ -112,13 +112,13 @@ public class PostgresTestDatabase
         ///     </item>
         /// </list>
         /// </remarks>
-        public static string GetNextDbName(IDbConnectionFactory dbConnectionFactory, string databaseNamePrefix)
+        public static string GetNextDbName(DbDataSource dbDataSource, string databaseNamePrefix)
         {
             lock (SyncLock)
             {
                 if (_sequence == null)
                 {
-                    _sequence = new NextTestDbNumSequence(dbConnectionFactory);
+                    _sequence = new NextTestDbNumSequence(dbDataSource);
                     _sequence.EnsureExistence();
                 }
 
@@ -129,12 +129,12 @@ public class PostgresTestDatabase
 
         private class NextTestDbNumSequence : PostgresSequence<int>
         {
-            private readonly IDbConnectionFactory _dbConnectionFactory;
+            private readonly DbDataSource _dbDataSource;
 
-            public NextTestDbNumSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
-                : base(dbConnectionFactory, startWith)
+            public NextTestDbNumSequence(DbDataSource dbDataSource, int startWith = 1)
+                : base(dbDataSource, startWith)
             {
-                _dbConnectionFactory = dbConnectionFactory;
+                _dbDataSource = dbDataSource;
             }
 
             protected override int ConvertNextValueFromSequence(object valueFromSequence)
@@ -150,7 +150,7 @@ public class PostgresTestDatabase
 
             public void EnsureExistence()
             {
-                using var dbConnection = _dbConnectionFactory.Create();
+                using var dbConnection = _dbDataSource.CreateConnection();
                 dbConnection.Open();
 
                 using var cmd = dbConnection.CreateCommand();

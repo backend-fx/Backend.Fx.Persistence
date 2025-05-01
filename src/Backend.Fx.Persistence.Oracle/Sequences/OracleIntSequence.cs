@@ -1,5 +1,5 @@
 using System;
-using Backend.Fx.Persistence.AdoNet;
+using System.Data.Common;
 using JetBrains.Annotations;
 
 namespace Backend.Fx.Persistence.Oracle.Sequences;
@@ -7,8 +7,8 @@ namespace Backend.Fx.Persistence.Oracle.Sequences;
 [PublicAPI]
 public abstract class OracleIntSequence : OracleSequence<int>
 {
-    protected OracleIntSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1) 
-        : base(dbConnectionFactory, startWith)
+    protected OracleIntSequence(DbDataSource dbDataSource, int startWith = 1)
+        : base(dbDataSource, startWith)
     {
     }
 

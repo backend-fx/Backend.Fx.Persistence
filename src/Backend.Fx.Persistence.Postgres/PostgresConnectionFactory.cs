@@ -7,6 +7,7 @@ using Npgsql;
 namespace Backend.Fx.Persistence.Postgres;
 
 [PublicAPI]
+[Obsolete]
 public class PostgresConnectionFactory : IDbConnectionFactory
 {
     private readonly NpgsqlConnectionStringBuilder _connectionStringBuilder;

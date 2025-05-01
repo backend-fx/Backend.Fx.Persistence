@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using Backend.Fx.Logging;
-using Backend.Fx.Persistence.AdoNet;
-using Backend.Fx.Persistence.IdGeneration;
 using Backend.Fx.Persistence.Sequences;
 using Microsoft.Extensions.Logging;
 
@@ -11,12 +10,12 @@ namespace Backend.Fx.Persistence.Oracle.Sequences;
 public abstract class OracleSequence<TId> : ISequence<TId>
 {
     private readonly ILogger _logger = Log.Create<OracleSequence<TId>>();
-    private readonly IDbConnectionFactory _dbConnectionFactory;
+    private readonly DbDataSource _dbConnectionFactory;
     private readonly int _startWith;
 
-    protected OracleSequence(IDbConnectionFactory dbConnectionFactory, int startWith = 1)
+    protected OracleSequence(DbDataSource dbDataSource, int startWith = 1)
     {
-        _dbConnectionFactory = dbConnectionFactory;
+        _dbConnectionFactory = dbDataSource;
         _startWith = startWith;
     }
 
@@ -39,7 +38,7 @@ public abstract class OracleSequence<TId> : ISequence<TId>
         _logger.LogInformation(
             "Ensuring existence of oracle sequence {SchemaPrefix}.{SequenceName}", SchemaPrefix, SequenceName);
 
-        using IDbConnection dbConnection = _dbConnectionFactory.Create();
+        using IDbConnection dbConnection = _dbConnectionFactory.CreateConnection();
         dbConnection.Open();
         bool sequenceExists;
         using (IDbCommand command = dbConnection.CreateCommand())
@@ -68,7 +67,7 @@ public abstract class OracleSequence<TId> : ISequence<TId>
 
     public TId GetNextValue()
     {
-        using IDbConnection dbConnection = _dbConnectionFactory.Create();
+        using IDbConnection dbConnection = _dbConnectionFactory.CreateConnection();
         dbConnection.Open();
 
         using IDbCommand command = dbConnection.CreateCommand();
