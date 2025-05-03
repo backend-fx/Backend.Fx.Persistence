@@ -6,15 +6,15 @@ using JetBrains.Annotations;
 namespace Backend.Fx.Persistence.AdoNet;
 
 [UsedImplicitly]
-public class CurrentDbTransactionHolder : CurrentTHolder<IDbTransaction>, ICurrentTHolder<IDbTransaction>
+public class CurrentDbTransactionHolder : CurrentTHolder<IDbTransaction?>, ICurrentTHolder<IDbTransaction?>
 {
     public override IDbTransaction ProvideInstance()
     {
         throw new NotSupportedException("The current DB transaction cannot be created on the fly");
     }
 
-    protected override string Describe(IDbTransaction instance)
+    protected override string Describe(IDbTransaction? instance)
     {
-        return $"DbTransaction #{instance.GetHashCode()}";   
+        return instance == null ? "<null>" : $"DbTransaction #{instance.GetHashCode()}";
     }
 }
