@@ -18,15 +18,14 @@ public class DbTransactionOperationDecorator : IOperation
 {
     private readonly ILogger _logger = Log.Create<DbTransactionOperationDecorator>();
     private readonly IDbConnection _dbConnection;
-    private readonly ICurrentTHolder<IDbTransaction> _currentTransactionHolder;
+    private readonly ICurrentTHolder<IDbTransaction?> _currentTransactionHolder;
     private readonly IOperation _operation;
-    private IsolationLevel _isolationLevel = IsolationLevel.Unspecified;
     private IDisposable? _transactionLifetimeLogger;
     private TxState _state = TxState.NotStarted;
 
     public DbTransactionOperationDecorator(
         IDbConnection dbConnection,
-        ICurrentTHolder<IDbTransaction> currentTransactionHolder,
+        ICurrentTHolder<IDbTransaction?> currentTransactionHolder,
         IOperation operation)
     {
         _dbConnection = dbConnection;
@@ -42,7 +41,7 @@ public class DbTransactionOperationDecorator : IOperation
         }
 
         _logger.LogDebug("Beginning transaction");
-        _currentTransactionHolder.ReplaceCurrent(_dbConnection.BeginTransaction(_isolationLevel));
+        _currentTransactionHolder.ReplaceCurrent(_dbConnection.BeginTransaction());
         _transactionLifetimeLogger = _logger.LogDebugDuration("Transaction open", "Transaction terminated");
         _state = TxState.Active;
         return _operation.BeginAsync(serviceScope, cancellationToken);
@@ -57,10 +56,15 @@ public class DbTransactionOperationDecorator : IOperation
             throw new InvalidOperationException($"A transaction cannot be committed when it is {_state}.");
         }
 
+        if (_currentTransactionHolder.Current == null)
+        {
+            throw new InvalidOperationException("No current transaction to complete.");
+        }
+
         _logger.LogDebug("Committing transaction");
         _currentTransactionHolder.Current.Commit();
         _currentTransactionHolder.Current.Dispose();
-        _currentTransactionHolder.ReplaceCurrent(null!);
+        _currentTransactionHolder.ReplaceCurrent(null);
         _transactionLifetimeLogger?.Dispose();
         _transactionLifetimeLogger = null;
 
@@ -79,7 +83,7 @@ public class DbTransactionOperationDecorator : IOperation
 
         if (_state == TxState.Active)
         {
-            _currentTransactionHolder.Current.Rollback();
+            _currentTransactionHolder.Current?.Rollback();
         }
 
         _currentTransactionHolder.ClearCurrent();
@@ -88,17 +92,6 @@ public class DbTransactionOperationDecorator : IOperation
         _transactionLifetimeLogger = null;
 
         _state = TxState.RolledBack;
-    }
-
-    public void SetIsolationLevel(IsolationLevel isolationLevel)
-    {
-        if (_state != TxState.NotStarted)
-        {
-            throw new InvalidOperationException(
-                "Isolation level cannot be changed after the transaction has been started");
-        }
-
-        _isolationLevel = isolationLevel;
     }
 
 
