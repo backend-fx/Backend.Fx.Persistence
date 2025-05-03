@@ -1,6 +1,5 @@
 using System;
 using System.Data.Common;
-using Backend.Fx.Persistence.AdoNet;
 using JetBrains.Annotations;
 
 namespace Backend.Fx.Persistence.MsSql.Sequences;

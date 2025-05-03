@@ -1,6 +1,5 @@
 using System;
 using System.Data.Common;
-using Backend.Fx.Persistence.AdoNet;
 using Backend.Fx.Persistence.Postgres.Sequences;
 using JetBrains.Annotations;
 using NodaTime;
@@ -51,6 +50,8 @@ public class PostgresTestDatabase
 {
     public string TestDbName { get; }
 
+    public NpgsqlDataSource DataSource { get; }
+
     public PostgresTestDatabase(
         string username,
         string password,
@@ -80,6 +81,10 @@ public class PostgresTestDatabase
         connectionStringBuilder.Password = password;
         connectionStringBuilder.Database = TestDbName;
         ConnectionStringBuilder = connectionStringBuilder;
+
+        var builder = new NpgsqlDataSourceBuilder(ConnectionStringBuilder.ConnectionString);
+        builder.UseNodaTime();
+        DataSource = builder.Build();
 
         // check connection as app user (not "postgres")
         new PostgresTcpSocketAvailabilityAwaiter(connectionStringBuilder.ConnectionString)

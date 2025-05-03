@@ -8,7 +8,6 @@ using Backend.Fx.Execution.Features;
 using Backend.Fx.Execution.Pipeline;
 using Backend.Fx.Logging;
 using Backend.Fx.Persistence.Abstractions;
-using Backend.Fx.Persistence.AdoNet;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
 
