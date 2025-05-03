@@ -1,6 +1,3 @@
-using System.Data;
-using Backend.Fx.Persistence.AdoNet;
-
 namespace Backend.Fx.Persistence.Oracle;
 //
 // public class OracleDbUtil : AdoNetDbUtil
