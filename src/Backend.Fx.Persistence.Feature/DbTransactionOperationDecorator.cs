@@ -94,6 +94,8 @@ public class DbTransactionOperationDecorator : IOperation
         _state = TxState.RolledBack;
     }
 
+    public int Counter => _operation.Counter;
+
 
     private enum TxState
     {
