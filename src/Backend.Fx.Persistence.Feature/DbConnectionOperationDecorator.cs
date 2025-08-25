@@ -50,4 +50,6 @@ public class DbConnectionOperationDecorator : IOperation
         // note: we do not dispose the DbConnection here, because we did not instantiate it. Disposing is always
         // up to the creator of the instance, that is in this case the injection container.
     }
+
+    public int Counter => _operation.Counter;
 }

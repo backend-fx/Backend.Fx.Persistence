@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Backend.Fx.Execution;
-using Backend.Fx.Execution.DependencyInjection;
 using Backend.Fx.Execution.Features;
 using Backend.Fx.Execution.Pipeline;
 using Backend.Fx.Logging;
@@ -21,7 +21,6 @@ public class PersistenceFeature : IFeature, IBootableFeature
     private readonly bool _enableTransactions;
     private readonly IDatabaseAvailabilityAwaiter _databaseAvailabilityAwaiter;
     private readonly IDatabaseBootstrapper _databaseBootstrapper;
-    private readonly List<IModule> _idGenerationModules = [];
 
     /// <param name="dbDataSource">
     /// The data source holds the connection string and creates <c>IDbConnection</c>s. Opening and closing of connections
@@ -54,8 +53,9 @@ public class PersistenceFeature : IFeature, IBootableFeature
     {
         Logger.LogInformation("Enabling persistence for the {ApplicationName}", application.GetType().Name);
         application.CompositionRoot.RegisterModules(new PersistenceModule(_dbDataSource, _enableTransactions));
-        application.CompositionRoot.RegisterModules(_idGenerationModules.ToArray());
     }
+
+    public IEnumerable<Assembly> Assemblies { get; } = [];
 
     public virtual async Task BootAsync(IBackendFxApplication application, CancellationToken cancellationToken = default)
     {
