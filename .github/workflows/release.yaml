@@ -2,12 +2,12 @@ name: release
 
 on:
   push:
-    tags:
+    tags: 
       - "v*.*.*"
 
 jobs:
-  nuke-build:
-    name: nuke-build
+  cake-build:
+    name: cake-build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -19,10 +19,9 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
-      - name: nuke build
-        run: ./build.sh publish
+      - name: cake build
+        run: ./build.sh --target=Publish
         env:
-            MYGET_APIKEY: ${{ secrets.MYGET_APIKEY }}
             NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}

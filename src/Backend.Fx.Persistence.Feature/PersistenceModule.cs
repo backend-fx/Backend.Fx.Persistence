@@ -23,7 +23,7 @@ public class PersistenceModule(DbDataSource dbDataSource, bool enableTransaction
         {
             // decorator: automatic transactions
             compositionRoot.Register(
-                ServiceDescriptor.Scoped<ICurrentTHolder<IDbTransaction>, CurrentDbTransactionHolder>());
+                ServiceDescriptor.Scoped<ICurrentTHolder<IDbTransaction?>, CurrentDbTransactionHolder>());
             compositionRoot.RegisterDecorator(ServiceDescriptor.Scoped<IOperation, DbTransactionOperationDecorator>());
         }
 
