@@ -23,7 +23,7 @@
 
     <ItemGroup>
         <PackageReference Include="Backend.Fx" Version="8.1.10" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301" PrivateAssets="All" />
     </ItemGroup>
 
 </Project>
