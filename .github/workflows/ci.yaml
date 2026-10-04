@@ -33,9 +33,10 @@ jobs:
       - name: Test
         run: >
           dotnet test
+          --project src/Backend.Fx.Persistence.Tests/Backend.Fx.Persistence.Tests.csproj
           --configuration Release
           --results-directory artifacts/test-results
-          --report-trx --report-trx-filename Tests.trx
+          --report-trx --report-trx-filename Backend.Fx.Persistence.Tests.trx
 
       - name: Test Report
         uses: dorny/test-reporter@v3
