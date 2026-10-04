@@ -2,26 +2,37 @@ name: release
 
 on:
   push:
-    tags: 
+    tags:
       - "v*.*.*"
 
 jobs:
-  cake-build:
-    name: cake-build
+  release:
+    name: release
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
-        with:
-          submodules: recursive
-          fetch-depth: 0
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
-      - name: cake build
-        run: ./build.sh --target=Publish
+      - name: push
+        run: |
+          dotnet build
+            --configuration Release \
+            -p:Version="${VERSION#v}"
+          dotnet pack \
+            --configuration Release \
+            --no-build \
+            --output artifacts \
+            -p:Version="${VERSION#v}"
+          dotnet nuget push "artifacts/*.nupkg" \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key "$NUGET_APIKEY" \
+            --skip-duplicate
         env:
-            NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
+          VERSION: ${{ github.ref_name }}
+          NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}

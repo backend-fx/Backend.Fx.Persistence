@@ -33,7 +33,7 @@ public class DbTransactionOperationDecorator : IOperation
         _operation = operation;
     }
 
-    public Task BeginAsync(IServiceScope serviceScope, CancellationToken cancellationToken = default)
+    public async Task BeginAsync(IServiceScope serviceScope, CancellationToken cancellationToken = default)
     {
         if (_state != TxState.NotStarted)
         {
@@ -44,7 +44,7 @@ public class DbTransactionOperationDecorator : IOperation
         _currentTransactionHolder.ReplaceCurrent(_dbConnection.BeginTransaction());
         _transactionLifetimeLogger = _logger.LogDebugDuration("Transaction open", "Transaction terminated");
         _state = TxState.Active;
-        return _operation.BeginAsync(serviceScope, cancellationToken);
+        await _operation.BeginAsync(serviceScope, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task CompleteAsync(CancellationToken cancellationToken = default)
@@ -84,6 +84,7 @@ public class DbTransactionOperationDecorator : IOperation
         if (_state == TxState.Active)
         {
             _currentTransactionHolder.Current?.Rollback();
+            _currentTransactionHolder.Current?.Dispose();
         }
 
         _currentTransactionHolder.ClearCurrent();

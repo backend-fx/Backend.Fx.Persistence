@@ -26,6 +26,6 @@ public class OracleDatabaseAvailabilityAwaiter(string connectionString) : Databa
         await using var cmd = connection.CreateCommand();
         cmd.CommandTimeout = 1;
         cmd.CommandText = "select 1 from DUAL";
-        await cmd.ExecuteScalarAsync(cancellationToken);
+        await cmd.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
     }
 }

@@ -16,11 +16,11 @@ public abstract class AdoNetDbUtil(DbDataSource dbDataSource) : IDbUtil
 
     public virtual void EnsureDroppedDatabase(string dbName)
     {
-        using var connection = dbDataSource.OpenConnection();
         bool exists = ExistsDatabase(dbName);
 
         if (exists)
         {
+            using var connection = dbDataSource.OpenConnection();
             Logger.LogInformation($"Dropping database {dbName}...");
             DropDatabase(dbName, connection);
         }

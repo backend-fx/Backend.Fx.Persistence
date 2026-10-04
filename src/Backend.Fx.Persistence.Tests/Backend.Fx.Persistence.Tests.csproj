@@ -1,23 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <Nullable>enable</Nullable>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Backend.Fx.Execution" Version="1.1.10" />
         <PackageReference Include="Backend.Fx.Execution.SimpleInjector" Version="1.1.8" />
-        <PackageReference Include="FakeItEasy" Version="9.0.1" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-        <PackageReference Include="xunit" Version="2.9.3" />
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" PrivateAssets="all"/>
+        <PackageReference Include="FakeItEasy" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.2"/>
+        <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.4.1"/>
+        <PackageReference Include="xunit.v3" Version="4.0.1"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="10.0.1">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
