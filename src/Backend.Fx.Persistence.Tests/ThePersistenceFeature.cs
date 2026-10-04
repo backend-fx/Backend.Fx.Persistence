@@ -24,20 +24,20 @@ public class ThePersistenceFeature
     public async Task DatabaseAwaiterIsOptional()
     {
         var app = new TestApplication(_fakeDataSource, databaseBootstrapper: _databaseBootstrapper);
-        await app.BootAsync();
+        await app.BootAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
     public async Task DatabaseBootstrapperIsOptional()
     {
         var app = new TestApplication(_fakeDataSource, databaseAvailabilityAwaiter: _databaseAvailabilityAwaiter);
-        await app.BootAsync();
+        await app.BootAsync(cancellation: TestContext.Current.CancellationToken);
     }
 
     [Fact]
     public async Task RunsDatabaseAwaiterAndBootstrapperOnBoot()
     {
-        await _app.BootAsync();
+        await _app.BootAsync(cancellation: TestContext.Current.CancellationToken);
 
         A.CallTo(() => _databaseAvailabilityAwaiter.WaitForDatabaseAsync(A<CancellationToken>._))
             .MustHaveHappenedOnceExactly();
@@ -49,7 +49,7 @@ public class ThePersistenceFeature
     [Fact]
     public async Task DoesNotOpenAnyConnectionsOnBoot()
     {
-        await _app.BootAsync();
+        await _app.BootAsync(cancellation: TestContext.Current.CancellationToken);
 
         A.CallTo(() => _fakeDataSource.ConnectionSpy.Open()).MustNotHaveHappened();
     }
@@ -59,16 +59,19 @@ public class ThePersistenceFeature
     {
         var whatever = A.Fake<IFormattable>();
 
-        await _app.BootAsync();
-        await _app.Invoker.InvokeAsync((_, _) =>
-                                       {
-                                           _ = whatever.ToString();
-                                           return Task.CompletedTask;
-                                       });
+        await _app.BootAsync(cancellation: TestContext.Current.CancellationToken);
+        await _app.Invoker.InvokeAsync(
+            (_, _) =>
+            {
+                _ = whatever.ToString();
+                return Task.CompletedTask;
+            }, cancellation: TestContext.Current.CancellationToken);
 
         A.CallTo(() => _fakeDataSource.ConnectionSpy.Open())
             .MustHaveHappenedOnceExactly()
-            .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._)).MustHaveHappenedOnceExactly())
+            .Then(
+                A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._))
+                    .MustHaveHappenedOnceExactly())
             .Then(A.CallTo(() => whatever.ToString()).MustHaveHappenedOnceExactly())
             .Then(A.CallTo(() => _fakeDataSource.TransactionSpy.Commit()).MustHaveHappenedOnceExactly())
             .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly())
@@ -80,14 +83,16 @@ public class ThePersistenceFeature
     [Fact]
     public async Task MaintainsConnectionAndTransactionOnFailingOperations()
     {
-        await _app.BootAsync();
-        await Assert.ThrowsAsync<DivideByZeroException>(async () =>
-                                                            await _app.Invoker.InvokeAsync((_, _) =>
-                                                                throw new DivideByZeroException()));
+        await _app.BootAsync(cancellation: TestContext.Current.CancellationToken);
+        await Assert.ThrowsAsync<DivideByZeroException>(async () => await _app.Invoker.InvokeAsync(
+                                                            (_, _) => throw new DivideByZeroException(),
+                                                            cancellation: TestContext.Current.CancellationToken));
 
         A.CallTo(() => _fakeDataSource.ConnectionSpy.Open())
             .MustHaveHappenedOnceExactly()
-            .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._)).MustHaveHappenedOnceExactly())
+            .Then(
+                A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._))
+                    .MustHaveHappenedOnceExactly())
             .Then(A.CallTo(() => _fakeDataSource.TransactionSpy.Rollback()).MustHaveHappenedOnceExactly())
             .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly())
             .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Dispose()).MustHaveHappened());
@@ -101,13 +106,14 @@ public class ThePersistenceFeature
         var whatever = A.Fake<IFormattable>();
         var app = new TestApplication(
             _fakeDataSource, _databaseAvailabilityAwaiter, _databaseBootstrapper, enableTransactions: false);
-        await app.BootAsync();
+        await app.BootAsync(cancellation: TestContext.Current.CancellationToken);
 
-        await app.Invoker.InvokeAsync((_, _) =>
-                                      {
-                                          _ = whatever.ToString();
-                                          return Task.CompletedTask;
-                                      });
+        await app.Invoker.InvokeAsync(
+            (_, _) =>
+            {
+                _ = whatever.ToString();
+                return Task.CompletedTask;
+            }, cancellation: TestContext.Current.CancellationToken);
 
         A.CallTo(() => _fakeDataSource.ConnectionSpy.Open())
             .MustHaveHappenedOnceExactly()
@@ -125,11 +131,13 @@ public class ThePersistenceFeature
     {
         var app = new TestApplication(
             _fakeDataSource, _databaseAvailabilityAwaiter, _databaseBootstrapper, enableTransactions: false);
-        await app.BootAsync();
+        await app.BootAsync(cancellation: TestContext.Current.CancellationToken);
 
         await Assert.ThrowsAsync<DivideByZeroException>(async () =>
-                                                            await app.Invoker.InvokeAsync((_, _) =>
-                                                                throw new DivideByZeroException()));
+                                                            await app.Invoker.InvokeAsync(
+                                                                (_, _) =>
+                                                                    throw new DivideByZeroException(),
+                                                                cancellation: TestContext.Current.CancellationToken));
 
         A.CallTo(() => _fakeDataSource.ConnectionSpy.Open())
             .MustHaveHappenedOnceExactly()
