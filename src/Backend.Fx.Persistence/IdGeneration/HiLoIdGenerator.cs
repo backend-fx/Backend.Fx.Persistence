@@ -1,4 +1,3 @@
-using System.Threading;
 using Backend.Fx.Logging;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;

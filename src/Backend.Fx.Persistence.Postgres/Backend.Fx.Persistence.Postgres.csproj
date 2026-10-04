@@ -1,11 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>true</ImplicitUsings>
         <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <LangVersion>12</LangVersion>
+        <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -26,8 +28,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Npgsql" Version="10.0.3" />
-        <PackageReference Include="Npgsql.NodaTime" Version="10.0.3" />
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" PrivateAssets="All"/>
+        <PackageReference Include="Npgsql" Version="10.0.3"/>
+        <PackageReference Include="Npgsql.NodaTime" Version="10.0.3"/>
     </ItemGroup>
 
 </Project>

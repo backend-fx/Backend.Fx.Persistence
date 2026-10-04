@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Backend.Fx.Persistence.Abstractions;
 using JetBrains.Annotations;
 using Oracle.ManagedDataAccess.Client;

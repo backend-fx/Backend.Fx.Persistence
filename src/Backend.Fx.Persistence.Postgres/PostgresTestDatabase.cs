@@ -1,4 +1,3 @@
-using System;
 using System.Data.Common;
 using Backend.Fx.Persistence.Postgres.Sequences;
 using JetBrains.Annotations;

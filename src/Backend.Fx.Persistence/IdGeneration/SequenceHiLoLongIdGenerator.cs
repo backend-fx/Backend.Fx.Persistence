@@ -1,4 +1,3 @@
-using System.Threading;
 using Backend.Fx.Logging;
 using Backend.Fx.Persistence.Sequences;
 using JetBrains.Annotations;

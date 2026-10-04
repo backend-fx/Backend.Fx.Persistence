@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>true</ImplicitUsings>
         <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <LangVersion>12</LangVersion>
+        <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -22,6 +24,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" PrivateAssets="All"/>
         <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.26.*" />
     </ItemGroup>
 

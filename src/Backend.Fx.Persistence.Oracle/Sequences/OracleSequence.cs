@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
 using Backend.Fx.Logging;
 using Backend.Fx.Persistence.Sequences;

@@ -1,4 +1,3 @@
-using System;
 using System.Data;
 using Backend.Fx.Persistence.AdoNet;
 using JetBrains.Annotations;
