@@ -21,7 +21,7 @@ jobs:
 
       - name: push
         run: |
-          dotnet build
+          dotnet build \
             --configuration Release \
             -p:Version="${VERSION#v}"
           dotnet pack \
