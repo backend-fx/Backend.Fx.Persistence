@@ -59,7 +59,7 @@ public class PersistenceFeature : IFeature, IBootableFeature
 
     public virtual async Task BootAsync(IBackendFxApplication application, CancellationToken cancellationToken = default)
     {
-        await _databaseAvailabilityAwaiter.WaitForDatabaseAsync(cancellationToken);
-        await _databaseBootstrapper.EnsureDatabaseExistenceAsync(cancellationToken);
+        await _databaseAvailabilityAwaiter.WaitForDatabaseAsync(cancellationToken).ConfigureAwait(false);
+        await _databaseBootstrapper.EnsureDatabaseExistenceAsync(cancellationToken).ConfigureAwait(false);
     }
 }

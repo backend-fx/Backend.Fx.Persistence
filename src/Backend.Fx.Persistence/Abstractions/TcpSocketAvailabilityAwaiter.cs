@@ -35,6 +35,6 @@ public class TcpSocketAvailabilityAwaiter : DatabaseAvailabilityAwaiter
     protected override async Task ConnectToDatabaseAsync(CancellationToken cancellationToken)
     {
         using var client = new TcpClient();
-        await client.ConnectAsync(_hostname, _port);
+        await client.ConnectAsync(_hostname, _port, cancellationToken).ConfigureAwait(false);
     }
 }

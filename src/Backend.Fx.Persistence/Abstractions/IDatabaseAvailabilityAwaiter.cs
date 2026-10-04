@@ -57,7 +57,7 @@ public abstract class DatabaseAvailabilityAwaiter : IDatabaseAvailabilityAwaiter
         {
             try
             {
-                await ConnectToDatabaseAsync(cancellationToken);
+                await ConnectToDatabaseAsync(cancellationToken).ConfigureAwait(false);
                 _logger.LogInformation("Database is available");
                 return;
             }
@@ -70,12 +70,12 @@ public abstract class DatabaseAvailabilityAwaiter : IDatabaseAvailabilityAwaiter
                 }
 
                 _logger.LogInformation($"Database not yet ready ({ex.Message}) - retrying...");
-                await Task.Delay(3000, cancellationToken);
+                await Task.Delay(3000, cancellationToken).ConfigureAwait(false);
             }
         }
     }
 
     protected abstract void ConnectToDatabase();
-    
+
     protected abstract Task ConnectToDatabaseAsync(CancellationToken cancellationToken);
 }
