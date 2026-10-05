@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
@@ -12,11 +11,11 @@
     <ItemGroup>
         <PackageReference Include="Backend.Fx.Execution" Version="1.1.10" />
         <PackageReference Include="Backend.Fx.Execution.SimpleInjector" Version="1.1.8" />
-        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" PrivateAssets="all"/>
-        <PackageReference Include="FakeItEasy" Version="9.0.1"/>
-        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.2"/>
-        <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.4.1"/>
-        <PackageReference Include="xunit.v3" Version="4.0.1"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" PrivateAssets="all" />
+        <PackageReference Include="FakeItEasy" Version="9.0.1" />
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.2" />
+        <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="2.4.1" />
+        <PackageReference Include="xunit.v3" Version="4.0.1" />
         <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -24,8 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Backend.Fx.Persistence.Feature\Backend.Fx.Persistence.Feature.csproj" />
-      <ProjectReference Include="..\..\src\Backend.Fx.Persistence\Backend.Fx.Persistence.csproj" />
+        <ProjectReference Include="..\..\src\Backend.Fx.Persistence.Feature\Backend.Fx.Persistence.Feature.csproj" />
+        <ProjectReference Include="..\..\src\Backend.Fx.Persistence\Backend.Fx.Persistence.csproj" />
     </ItemGroup>
-
 </Project>

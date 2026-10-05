@@ -6,7 +6,9 @@ using Oracle.ManagedDataAccess.Types;
 namespace Backend.Fx.Persistence.Oracle.Packages;
 
 [PublicAPI]
-public abstract class CustomCollectionType<TType, TValue> : CustomType<TType>, IOracleArrayTypeFactory
+public abstract class CustomCollectionType<TType, TValue>
+    : CustomType<TType>,
+        IOracleArrayTypeFactory
     where TType : CustomType<TType>, new()
 {
     [OracleArrayMapping]

@@ -8,12 +8,13 @@ namespace Backend.Fx.Persistence.Postgres;
 [PublicAPI]
 public class PostgresDbUtil : AdoNetDbUtil
 {
-    public PostgresDbUtil(DbDataSource dbConnectionFactory) : base(dbConnectionFactory)
-    { }
+    public PostgresDbUtil(DbDataSource dbConnectionFactory)
+        : base(dbConnectionFactory) { }
 
     protected override string GetIsAvailableCheckCommand() => "SELECT 1";
 
-    protected override string GetCreateSchemaCommand(string schemaName) => $"CREATE SCHEMA \"{schemaName}\"";
+    protected override string GetCreateSchemaCommand(string schemaName) =>
+        $"CREATE SCHEMA \"{schemaName}\"";
 
     protected override string GetExistsDatabaseCommand(string dbName) =>
         $"SELECT 1 FROM pg_database WHERE datname = '{dbName}'";
@@ -22,7 +23,8 @@ public class PostgresDbUtil : AdoNetDbUtil
     {
         using (var singleUserCmd = connection.CreateCommand())
         {
-            singleUserCmd.CommandText = $"UPDATE pg_database SET datallowconn = 'false' WHERE datname = '{dbName}';";
+            singleUserCmd.CommandText =
+                $"UPDATE pg_database SET datallowconn = 'false' WHERE datname = '{dbName}';";
             singleUserCmd.ExecuteNonQuery();
         }
 
@@ -43,5 +45,6 @@ public class PostgresDbUtil : AdoNetDbUtil
     protected override string GetExistsTableCommand(string schemaName, string tableName) =>
         $"SELECT 1 FROM information_schema.tables WHERE table_name = '{tableName}' AND table_schema = '{schemaName}'";
 
-    protected override string GetCreateDatabaseCommand(string dbName) => $"CREATE DATABASE \"{dbName}\"";
+    protected override string GetCreateDatabaseCommand(string dbName) =>
+        $"CREATE DATABASE \"{dbName}\"";
 }

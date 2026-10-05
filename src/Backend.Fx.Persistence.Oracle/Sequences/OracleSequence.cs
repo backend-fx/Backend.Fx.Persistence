@@ -27,7 +27,8 @@ public abstract class OracleSequence<TId> : ISequence<TId>
     {
         get
         {
-            if (string.IsNullOrEmpty(SchemaName)) return string.Empty;
+            if (string.IsNullOrEmpty(SchemaName))
+                return string.Empty;
 
             return SchemaName + ".";
         }
@@ -36,32 +37,45 @@ public abstract class OracleSequence<TId> : ISequence<TId>
     public void EnsureSequence()
     {
         _logger.LogInformation(
-            "Ensuring existence of oracle sequence {SchemaPrefix}.{SequenceName}", SchemaPrefix, SequenceName);
+            "Ensuring existence of oracle sequence {SchemaPrefix}.{SequenceName}",
+            SchemaPrefix,
+            SequenceName
+        );
 
         using IDbConnection dbConnection = _dbConnectionFactory.CreateConnection();
         dbConnection.Open();
         bool sequenceExists;
         using (IDbCommand command = dbConnection.CreateCommand())
         {
-            command.CommandText = $"SELECT count(*) FROM user_sequences WHERE sequence_name = '{SequenceName}'";
+            command.CommandText =
+                $"SELECT count(*) FROM user_sequences WHERE sequence_name = '{SequenceName}'";
             sequenceExists = (decimal)command.ExecuteScalar()! == 1m;
         }
 
         if (sequenceExists)
         {
-            _logger.LogInformation("Oracle sequence {SchemaPrefix}.{SequenceName} exists", SchemaPrefix, SequenceName);
+            _logger.LogInformation(
+                "Oracle sequence {SchemaPrefix}.{SequenceName} exists",
+                SchemaPrefix,
+                SequenceName
+            );
         }
         else
         {
             _logger.LogInformation(
                 "Oracle sequence {SchemaPrefix}.{SequenceName} does not exist yet and will be created now",
                 SchemaPrefix,
-                SequenceName);
+                SequenceName
+            );
             using IDbCommand cmd = dbConnection.CreateCommand();
-            cmd.CommandText
-                = $"CREATE SEQUENCE {SchemaPrefix}{SequenceName} START WITH {_startWith} INCREMENT BY {Increment}";
+            cmd.CommandText =
+                $"CREATE SEQUENCE {SchemaPrefix}{SequenceName} START WITH {_startWith} INCREMENT BY {Increment}";
             cmd.ExecuteNonQuery();
-            _logger.LogInformation("Oracle sequence {SchemaPrefix}.{SequenceName} created", SchemaPrefix, SequenceName);
+            _logger.LogInformation(
+                "Oracle sequence {SchemaPrefix}.{SequenceName} created",
+                SchemaPrefix,
+                SequenceName
+            );
         }
     }
 
@@ -74,12 +88,16 @@ public abstract class OracleSequence<TId> : ISequence<TId>
         command.CommandText = $"SELECT {SchemaPrefix}{SequenceName}.NEXTVAL FROM dual";
         TId nextValue = ConvertNextValueFromSequence(
             command.ExecuteScalar()
-            ?? throw new InvalidOperationException("Getting next value from sequence returned NULL"));
+                ?? throw new InvalidOperationException(
+                    "Getting next value from sequence returned NULL"
+                )
+        );
         _logger.LogDebug(
             "Oracle sequence {SchemaPrefix}.{SequenceName} served {NextValue} as next value",
             SchemaPrefix,
             SequenceName,
-            nextValue);
+            nextValue
+        );
 
         return nextValue;
     }

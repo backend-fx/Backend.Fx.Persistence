@@ -15,7 +15,6 @@ public interface IDatabaseBootstrapper : IDisposable
 
     public DatabaseState State { get; }
 
-
     public enum DatabaseState
     {
         NotAvailableYet,
@@ -29,7 +28,8 @@ public interface IDatabaseBootstrapper : IDisposable
 public abstract class DatabaseBootstrapper(IDatabaseAvailabilityAwaiter databaseAvailabilityAwaiter)
     : IDatabaseBootstrapper
 {
-    public IDatabaseAvailabilityAwaiter DatabaseAvailabilityAwaiter { get; } = databaseAvailabilityAwaiter;
+    public IDatabaseAvailabilityAwaiter DatabaseAvailabilityAwaiter { get; } =
+        databaseAvailabilityAwaiter;
 
     public IDatabaseBootstrapper.DatabaseState State { get; private set; } =
         IDatabaseBootstrapper.DatabaseState.NotAvailableYet;
@@ -51,11 +51,11 @@ public abstract class DatabaseBootstrapper(IDatabaseAvailabilityAwaiter database
         }
     }
 
-    protected abstract Task EnsureDatabaseExistenceWhenDatabaseIsAvailableAsync(CancellationToken cancellationToken);
+    protected abstract Task EnsureDatabaseExistenceWhenDatabaseIsAvailableAsync(
+        CancellationToken cancellationToken
+    );
 
-    protected virtual void Dispose(bool disposing)
-    {
-    }
+    protected virtual void Dispose(bool disposing) { }
 
     public void Dispose()
     {

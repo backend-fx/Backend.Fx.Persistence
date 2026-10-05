@@ -7,7 +7,8 @@ using Oracle.ManagedDataAccess.Client;
 namespace Backend.Fx.Persistence.Oracle;
 
 [PublicAPI]
-public class OracleDatabaseAvailabilityAwaiter(string connectionString) : DatabaseAvailabilityAwaiter
+public class OracleDatabaseAvailabilityAwaiter(string connectionString)
+    : DatabaseAvailabilityAwaiter
 {
     protected override void ConnectToDatabase()
     {

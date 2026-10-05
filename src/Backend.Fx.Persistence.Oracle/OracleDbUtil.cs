@@ -1,4 +1,5 @@
 namespace Backend.Fx.Persistence.Oracle;
+
 //
 // public class OracleDbUtil : AdoNetDbUtil
 // {

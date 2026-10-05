@@ -10,6 +10,6 @@ public class PostgresTcpSocketAvailabilityAwaiter : TcpSocketAvailabilityAwaiter
     public PostgresTcpSocketAvailabilityAwaiter(string connectionString)
         : base(
             new NpgsqlConnectionStringBuilder(connectionString).Host!,
-            new NpgsqlConnectionStringBuilder(connectionString).Port)
-    { }
+            new NpgsqlConnectionStringBuilder(connectionString).Port
+        ) { }
 }

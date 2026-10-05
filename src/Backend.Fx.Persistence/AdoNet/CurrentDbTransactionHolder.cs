@@ -6,7 +6,9 @@ using JetBrains.Annotations;
 namespace Backend.Fx.Persistence.AdoNet;
 
 [UsedImplicitly]
-public class CurrentDbTransactionHolder : CurrentTHolder<IDbTransaction?>, ICurrentTHolder<IDbTransaction?>
+public class CurrentDbTransactionHolder
+    : CurrentTHolder<IDbTransaction?>,
+        ICurrentTHolder<IDbTransaction?>
 {
     public override IDbTransaction ProvideInstance()
     {

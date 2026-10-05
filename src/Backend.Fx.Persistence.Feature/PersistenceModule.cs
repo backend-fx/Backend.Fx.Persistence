@@ -17,17 +17,28 @@ public class PersistenceModule(DbDataSource dbDataSource, bool enableTransaction
 
         // scoped db connections are provided by the connection factory
         compositionRoot.Register(
-            ServiceDescriptor.Scoped<IDbConnection>(sp => sp.GetRequiredService<DbDataSource>().CreateConnection()));
+            ServiceDescriptor.Scoped<IDbConnection>(sp =>
+                sp.GetRequiredService<DbDataSource>().CreateConnection()
+            )
+        );
 
         if (enableTransactions)
         {
             // decorator: automatic transactions
             compositionRoot.Register(
-                ServiceDescriptor.Scoped<ICurrentTHolder<IDbTransaction?>, CurrentDbTransactionHolder>());
-            compositionRoot.RegisterDecorator(ServiceDescriptor.Scoped<IOperation, DbTransactionOperationDecorator>());
+                ServiceDescriptor.Scoped<
+                    ICurrentTHolder<IDbTransaction?>,
+                    CurrentDbTransactionHolder
+                >()
+            );
+            compositionRoot.RegisterDecorator(
+                ServiceDescriptor.Scoped<IOperation, DbTransactionOperationDecorator>()
+            );
         }
 
         // decorator: automatic connection opening and closing
-        compositionRoot.RegisterDecorator(ServiceDescriptor.Scoped<IOperation, DbConnectionOperationDecorator>());
+        compositionRoot.RegisterDecorator(
+            ServiceDescriptor.Scoped<IOperation, DbConnectionOperationDecorator>()
+        );
     }
 }

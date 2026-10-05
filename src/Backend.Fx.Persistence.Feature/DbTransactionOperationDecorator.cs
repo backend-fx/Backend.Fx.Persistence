@@ -26,23 +26,32 @@ public class DbTransactionOperationDecorator : IOperation
     public DbTransactionOperationDecorator(
         IDbConnection dbConnection,
         ICurrentTHolder<IDbTransaction?> currentTransactionHolder,
-        IOperation operation)
+        IOperation operation
+    )
     {
         _dbConnection = dbConnection;
         _currentTransactionHolder = currentTransactionHolder;
         _operation = operation;
     }
 
-    public async Task BeginAsync(IServiceScope serviceScope, CancellationToken cancellationToken = default)
+    public async Task BeginAsync(
+        IServiceScope serviceScope,
+        CancellationToken cancellationToken = default
+    )
     {
         if (_state != TxState.NotStarted)
         {
-            throw new InvalidOperationException("A Transaction has been started by this operation before.");
+            throw new InvalidOperationException(
+                "A Transaction has been started by this operation before."
+            );
         }
 
         _logger.LogDebug("Beginning transaction");
         _currentTransactionHolder.ReplaceCurrent(_dbConnection.BeginTransaction());
-        _transactionLifetimeLogger = _logger.LogDebugDuration("Transaction open", "Transaction terminated");
+        _transactionLifetimeLogger = _logger.LogDebugDuration(
+            "Transaction open",
+            "Transaction terminated"
+        );
         _state = TxState.Active;
         await _operation.BeginAsync(serviceScope, cancellationToken).ConfigureAwait(false);
     }
@@ -53,7 +62,9 @@ public class DbTransactionOperationDecorator : IOperation
 
         if (_state != TxState.Active)
         {
-            throw new InvalidOperationException($"A transaction cannot be committed when it is {_state}.");
+            throw new InvalidOperationException(
+                $"A transaction cannot be committed when it is {_state}."
+            );
         }
 
         if (_currentTransactionHolder.Current == null)
@@ -97,12 +108,11 @@ public class DbTransactionOperationDecorator : IOperation
 
     public int Counter => _operation.Counter;
 
-
     private enum TxState
     {
         NotStarted,
         Active,
         Committed,
-        RolledBack
+        RolledBack,
     }
 }

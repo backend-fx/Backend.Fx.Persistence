@@ -15,16 +15,18 @@ public class PostgresConnectionFactory : IDbConnectionFactory
 
     public PostgresConnectionFactory(
         NpgsqlConnectionStringBuilder connectionStringBuilder,
-        Action<NpgsqlDataSourceBuilder>? configure = null)
+        Action<NpgsqlDataSourceBuilder>? configure = null
+    )
     {
         _connectionStringBuilder = connectionStringBuilder;
-        var dataSourceBuilder = new NpgsqlDataSourceBuilder(_connectionStringBuilder.ConnectionString);
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(
+            _connectionStringBuilder.ConnectionString
+        );
         configure?.Invoke(dataSourceBuilder);
         _dataSource = dataSourceBuilder.Build();
     }
 
-    public virtual void ConfigureDataSource(NpgsqlDataSourceBuilder dataSourceBuilder)
-    { }
+    public virtual void ConfigureDataSource(NpgsqlDataSourceBuilder dataSourceBuilder) { }
 
     public string ConnectionString => _connectionStringBuilder.ConnectionString;
 

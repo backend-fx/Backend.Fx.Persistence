@@ -24,11 +24,17 @@ public class DbConnectionOperationDecorator : IOperation
         _operation = operation;
     }
 
-    public async Task BeginAsync(IServiceScope serviceScope, CancellationToken cancellationToken = default)
+    public async Task BeginAsync(
+        IServiceScope serviceScope,
+        CancellationToken cancellationToken = default
+    )
     {
         _logger.LogDebug("Opening database connection");
         _dbConnection.Open();
-        _connectionLifetimeLogger = _logger.LogDebugDuration("Database connection open", "Database connection closed");
+        _connectionLifetimeLogger = _logger.LogDebugDuration(
+            "Database connection open",
+            "Database connection closed"
+        );
         await _operation.BeginAsync(serviceScope, cancellationToken).ConfigureAwait(false);
     }
 

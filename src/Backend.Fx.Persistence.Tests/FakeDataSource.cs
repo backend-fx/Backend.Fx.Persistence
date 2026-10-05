@@ -20,8 +20,8 @@ public class FakeDataSource : DbDataSource
 
     public override string ConnectionString => "Not=A;Connection=String;";
 
-
-    private class FakeDbConnection(IDbConnection connectionSpy, IDbTransaction transactionSpy) : DbConnection
+    private class FakeDbConnection(IDbConnection connectionSpy, IDbTransaction transactionSpy)
+        : DbConnection
     {
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
@@ -77,8 +77,8 @@ public class FakeDataSource : DbDataSource
         }
     }
 
-
-    private class FakeDbTransaction(FakeDbConnection dbConnection, IDbTransaction transactionSpy) : DbTransaction
+    private class FakeDbTransaction(FakeDbConnection dbConnection, IDbTransaction transactionSpy)
+        : DbTransaction
     {
         public override void Commit()
         {

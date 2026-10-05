@@ -10,14 +10,19 @@ namespace Backend.Fx.Persistence.Tests;
 
 public class ThePersistenceFeature
 {
-    private readonly IDatabaseAvailabilityAwaiter _databaseAvailabilityAwaiter = A.Fake<IDatabaseAvailabilityAwaiter>();
+    private readonly IDatabaseAvailabilityAwaiter _databaseAvailabilityAwaiter =
+        A.Fake<IDatabaseAvailabilityAwaiter>();
     private readonly IDatabaseBootstrapper _databaseBootstrapper = A.Fake<IDatabaseBootstrapper>();
     private readonly TestApplication _app;
     private readonly FakeDataSource _fakeDataSource = new();
 
     public ThePersistenceFeature()
     {
-        _app = new TestApplication(_fakeDataSource, _databaseAvailabilityAwaiter, _databaseBootstrapper);
+        _app = new TestApplication(
+            _fakeDataSource,
+            _databaseAvailabilityAwaiter,
+            _databaseBootstrapper
+        );
     }
 
     [Fact]
@@ -30,7 +35,10 @@ public class ThePersistenceFeature
     [Fact]
     public async Task DatabaseBootstrapperIsOptional()
     {
-        var app = new TestApplication(_fakeDataSource, databaseAvailabilityAwaiter: _databaseAvailabilityAwaiter);
+        var app = new TestApplication(
+            _fakeDataSource,
+            databaseAvailabilityAwaiter: _databaseAvailabilityAwaiter
+        );
         await app.BootAsync(cancellation: TestContext.Current.CancellationToken);
     }
 
@@ -65,16 +73,24 @@ public class ThePersistenceFeature
             {
                 _ = whatever.ToString();
                 return Task.CompletedTask;
-            }, cancellation: TestContext.Current.CancellationToken);
+            },
+            cancellation: TestContext.Current.CancellationToken
+        );
 
         A.CallTo(() => _fakeDataSource.ConnectionSpy.Open())
             .MustHaveHappenedOnceExactly()
             .Then(
                 A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._))
-                    .MustHaveHappenedOnceExactly())
+                    .MustHaveHappenedOnceExactly()
+            )
             .Then(A.CallTo(() => whatever.ToString()).MustHaveHappenedOnceExactly())
-            .Then(A.CallTo(() => _fakeDataSource.TransactionSpy.Commit()).MustHaveHappenedOnceExactly())
-            .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly())
+            .Then(
+                A.CallTo(() => _fakeDataSource.TransactionSpy.Commit())
+                    .MustHaveHappenedOnceExactly()
+            )
+            .Then(
+                A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly()
+            )
             .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Dispose()).MustHaveHappened());
 
         A.CallTo(() => _fakeDataSource.TransactionSpy.Rollback()).MustNotHaveHappened();
@@ -84,17 +100,26 @@ public class ThePersistenceFeature
     public async Task MaintainsConnectionAndTransactionOnFailingOperations()
     {
         await _app.BootAsync(cancellation: TestContext.Current.CancellationToken);
-        await Assert.ThrowsAsync<DivideByZeroException>(async () => await _app.Invoker.InvokeAsync(
-                                                            (_, _) => throw new DivideByZeroException(),
-                                                            cancellation: TestContext.Current.CancellationToken));
+        await Assert.ThrowsAsync<DivideByZeroException>(async () =>
+            await _app.Invoker.InvokeAsync(
+                (_, _) => throw new DivideByZeroException(),
+                cancellation: TestContext.Current.CancellationToken
+            )
+        );
 
         A.CallTo(() => _fakeDataSource.ConnectionSpy.Open())
             .MustHaveHappenedOnceExactly()
             .Then(
                 A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._))
-                    .MustHaveHappenedOnceExactly())
-            .Then(A.CallTo(() => _fakeDataSource.TransactionSpy.Rollback()).MustHaveHappenedOnceExactly())
-            .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly())
+                    .MustHaveHappenedOnceExactly()
+            )
+            .Then(
+                A.CallTo(() => _fakeDataSource.TransactionSpy.Rollback())
+                    .MustHaveHappenedOnceExactly()
+            )
+            .Then(
+                A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly()
+            )
             .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Dispose()).MustHaveHappened());
 
         A.CallTo(() => _fakeDataSource.TransactionSpy.Commit()).MustNotHaveHappened();
@@ -105,7 +130,11 @@ public class ThePersistenceFeature
     {
         var whatever = A.Fake<IFormattable>();
         var app = new TestApplication(
-            _fakeDataSource, _databaseAvailabilityAwaiter, _databaseBootstrapper, enableTransactions: false);
+            _fakeDataSource,
+            _databaseAvailabilityAwaiter,
+            _databaseBootstrapper,
+            enableTransactions: false
+        );
         await app.BootAsync(cancellation: TestContext.Current.CancellationToken);
 
         await app.Invoker.InvokeAsync(
@@ -113,15 +142,20 @@ public class ThePersistenceFeature
             {
                 _ = whatever.ToString();
                 return Task.CompletedTask;
-            }, cancellation: TestContext.Current.CancellationToken);
+            },
+            cancellation: TestContext.Current.CancellationToken
+        );
 
         A.CallTo(() => _fakeDataSource.ConnectionSpy.Open())
             .MustHaveHappenedOnceExactly()
             .Then(A.CallTo(() => whatever.ToString()).MustHaveHappenedOnceExactly())
-            .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly())
+            .Then(
+                A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly()
+            )
             .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Dispose()).MustHaveHappened());
 
-        A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._)).MustNotHaveHappened();
+        A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._))
+            .MustNotHaveHappened();
         A.CallTo(() => _fakeDataSource.TransactionSpy.Commit()).MustNotHaveHappened();
         A.CallTo(() => _fakeDataSource.TransactionSpy.Rollback()).MustNotHaveHappened();
     }
@@ -130,21 +164,29 @@ public class ThePersistenceFeature
     public async Task AllowsDisablingTransactionsWithFailingCall()
     {
         var app = new TestApplication(
-            _fakeDataSource, _databaseAvailabilityAwaiter, _databaseBootstrapper, enableTransactions: false);
+            _fakeDataSource,
+            _databaseAvailabilityAwaiter,
+            _databaseBootstrapper,
+            enableTransactions: false
+        );
         await app.BootAsync(cancellation: TestContext.Current.CancellationToken);
 
         await Assert.ThrowsAsync<DivideByZeroException>(async () =>
-                                                            await app.Invoker.InvokeAsync(
-                                                                (_, _) =>
-                                                                    throw new DivideByZeroException(),
-                                                                cancellation: TestContext.Current.CancellationToken));
+            await app.Invoker.InvokeAsync(
+                (_, _) => throw new DivideByZeroException(),
+                cancellation: TestContext.Current.CancellationToken
+            )
+        );
 
         A.CallTo(() => _fakeDataSource.ConnectionSpy.Open())
             .MustHaveHappenedOnceExactly()
-            .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly())
+            .Then(
+                A.CallTo(() => _fakeDataSource.ConnectionSpy.Close()).MustHaveHappenedOnceExactly()
+            )
             .Then(A.CallTo(() => _fakeDataSource.ConnectionSpy.Dispose()).MustHaveHappened());
 
-        A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._)).MustNotHaveHappened();
+        A.CallTo(() => _fakeDataSource.ConnectionSpy.BeginTransaction(A<IsolationLevel>._))
+            .MustNotHaveHappened();
         A.CallTo(() => _fakeDataSource.TransactionSpy.Commit()).MustNotHaveHappened();
         A.CallTo(() => _fakeDataSource.TransactionSpy.Rollback()).MustNotHaveHappened();
     }
