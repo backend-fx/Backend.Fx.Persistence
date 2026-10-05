@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="src/Backend.Fx.Persistence.Tests/Backend.Fx.Persistence.Tests.csproj" />
+  </Folder>
+  <Project Path="src/Backend.Fx.Persistence.Feature/Backend.Fx.Persistence.Feature.csproj" />
+  <Project Path="src/Backend.Fx.Persistence.MsSql/Backend.Fx.Persistence.MsSql.csproj" />
+  <Project Path="src/Backend.Fx.Persistence.Oracle/Backend.Fx.Persistence.Oracle.csproj" />
+  <Project Path="src/Backend.Fx.Persistence.Postgres/Backend.Fx.Persistence.Postgres.csproj" />
+  <Project Path="src/Backend.Fx.Persistence/Backend.Fx.Persistence.csproj" />
+</Solution>
