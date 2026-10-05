@@ -8,9 +8,7 @@ namespace Backend.Fx.Persistence.Oracle.Sequences;
 public abstract class OracleIntSequence : OracleSequence<int>
 {
     protected OracleIntSequence(DbDataSource dbDataSource, int startWith = 1)
-        : base(dbDataSource, startWith)
-    {
-    }
+        : base(dbDataSource, startWith) { }
 
     protected override int ConvertNextValueFromSequence(object valueFromSequence)
     {

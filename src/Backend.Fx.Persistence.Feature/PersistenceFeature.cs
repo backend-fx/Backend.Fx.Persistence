@@ -41,25 +41,39 @@ public class PersistenceFeature : IFeature, IBootableFeature
         DbDataSource dbDataSource,
         IDatabaseAvailabilityAwaiter? databaseAvailabilityAwaiter = null,
         IDatabaseBootstrapper? databaseBootstrapper = null,
-        bool enableTransactions = true)
+        bool enableTransactions = true
+    )
     {
         _dbDataSource = dbDataSource;
         _enableTransactions = enableTransactions;
-        _databaseAvailabilityAwaiter = databaseAvailabilityAwaiter ?? new NullDatabaseAvailabilityAwaiter();
+        _databaseAvailabilityAwaiter =
+            databaseAvailabilityAwaiter ?? new NullDatabaseAvailabilityAwaiter();
         _databaseBootstrapper = databaseBootstrapper ?? new NullDatabaseBootstrapper();
     }
 
     public virtual void Enable(IBackendFxApplication application)
     {
-        Logger.LogInformation("Enabling persistence for the {ApplicationName}", application.GetType().Name);
-        application.CompositionRoot.RegisterModules(new PersistenceModule(_dbDataSource, _enableTransactions));
+        Logger.LogInformation(
+            "Enabling persistence for the {ApplicationName}",
+            application.GetType().Name
+        );
+        application.CompositionRoot.RegisterModules(
+            new PersistenceModule(_dbDataSource, _enableTransactions)
+        );
     }
 
     public IEnumerable<Assembly> Assemblies { get; } = [];
 
-    public virtual async Task BootAsync(IBackendFxApplication application, CancellationToken cancellationToken = default)
+    public virtual async Task BootAsync(
+        IBackendFxApplication application,
+        CancellationToken cancellationToken = default
+    )
     {
-        await _databaseAvailabilityAwaiter.WaitForDatabaseAsync(cancellationToken).ConfigureAwait(false);
-        await _databaseBootstrapper.EnsureDatabaseExistenceAsync(cancellationToken).ConfigureAwait(false);
+        await _databaseAvailabilityAwaiter
+            .WaitForDatabaseAsync(cancellationToken)
+            .ConfigureAwait(false);
+        await _databaseBootstrapper
+            .EnsureDatabaseExistenceAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 }

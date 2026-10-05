@@ -13,8 +13,9 @@ public class SequenceHiLoIntIdGenerator : SequenceHiLoIdGenerator<int>
     private int _highId = -1;
     private int _lowId = -1;
     private readonly bool _isTraceEnabled;
-        
-    public SequenceHiLoIntIdGenerator(ISequence<int> sequence) : base(sequence)
+
+    public SequenceHiLoIntIdGenerator(ISequence<int> sequence)
+        : base(sequence)
     {
         _isTraceEnabled = _logger.IsEnabled(LogLevel.Trace);
     }
@@ -25,7 +26,7 @@ public class SequenceHiLoIntIdGenerator : SequenceHiLoIdGenerator<int>
         {
             // first fetch from sequence in life time
             _lowId = GetNextBlockStart();
-            _highId = _lowId + BlockSize- 1;
+            _highId = _lowId + BlockSize - 1;
         }
     }
 
@@ -33,7 +34,8 @@ public class SequenceHiLoIntIdGenerator : SequenceHiLoIdGenerator<int>
     {
         var nextId = _lowId;
         Interlocked.Increment(ref _lowId);
-        if (_isTraceEnabled) _logger.LogTrace("Providing id {NextId}", nextId);
+        if (_isTraceEnabled)
+            _logger.LogTrace("Providing id {NextId}", nextId);
         return nextId;
     }
 }

@@ -8,9 +8,7 @@ namespace Backend.Fx.Persistence.Oracle.Sequences;
 public abstract class OracleLongSequence : OracleSequence<long>
 {
     protected OracleLongSequence(DbDataSource dbDataSource, int startWith = 1)
-        : base(dbDataSource, startWith)
-    {
-    }
+        : base(dbDataSource, startWith) { }
 
     protected override long ConvertNextValueFromSequence(object valueFromSequence)
     {

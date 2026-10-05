@@ -22,7 +22,9 @@ public abstract class DatabaseAvailabilityAwaiter : IDatabaseAvailabilityAwaiter
 
     public void WaitForDatabase(Duration? timeout = null)
     {
-        var timeoutEnd = SystemClock.Instance.GetCurrentInstant().Plus(timeout ?? Duration.FromDays(1));
+        var timeoutEnd = SystemClock
+            .Instance.GetCurrentInstant()
+            .Plus(timeout ?? Duration.FromDays(1));
 
         _logger.LogInformation("Waiting for database to become available");
 
@@ -47,7 +49,6 @@ public abstract class DatabaseAvailabilityAwaiter : IDatabaseAvailabilityAwaiter
             }
         }
     }
-
 
     public async Task WaitForDatabaseAsync(CancellationToken cancellationToken = default)
     {

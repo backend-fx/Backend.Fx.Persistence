@@ -8,9 +8,7 @@ namespace Backend.Fx.Persistence.Postgres.Sequences;
 public abstract class PostgresIntSequence : PostgresSequence<int>
 {
     protected PostgresIntSequence(DbDataSource dbDataSource, int startWith = 1)
-        : base(dbDataSource, startWith)
-    {
-    }
+        : base(dbDataSource, startWith) { }
 
     protected override int ConvertNextValueFromSequence(object valueFromSequence)
     {

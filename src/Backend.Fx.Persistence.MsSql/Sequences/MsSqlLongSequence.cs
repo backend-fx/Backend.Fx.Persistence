@@ -8,9 +8,7 @@ namespace Backend.Fx.Persistence.MsSql.Sequences;
 public abstract class MsSqlLongSequence : MsSqlSequence<long>
 {
     protected MsSqlLongSequence(DbDataSource dbDataSource, int startWith = 1)
-        : base(dbDataSource, startWith)
-    {
-    }
+        : base(dbDataSource, startWith) { }
 
     protected override long ConvertNextValueFromSequence(object valueFromSequence)
     {

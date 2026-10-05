@@ -27,11 +27,15 @@ public abstract class OraclePackage(OracleConnection oracleConnection, string pa
     protected TResult[] CallFunction<TResult>(
         string functionName,
         Func<IDataReader, TResult> read,
-        params OracleParameter[] parameters)
+        params OracleParameter[] parameters
+    )
     {
         using (_logger.LogDebugDuration($"Calling {PackageName}.{functionName}"))
         {
-            string paramDeclarations = string.Join(",", parameters.Select(p => $":{p.ParameterName}"));
+            string paramDeclarations = string.Join(
+                ",",
+                parameters.Select(p => $":{p.ParameterName}")
+            );
             var sql = $"SELECT * FROM TABLE({PackageName}.{functionName}({paramDeclarations}))";
 
             var command = oracleConnection.CreateCommand();
@@ -64,7 +68,7 @@ public abstract class OraclePackage(OracleConnection oracleConnection, string pa
                 {
                     BindByName = true,
                     CommandType = CommandType.StoredProcedure,
-                    Connection = oracleConnection
+                    Connection = oracleConnection,
                 };
 
                 command.Parameters.AddRange(parameters);
@@ -81,7 +85,8 @@ public abstract class OraclePackage(OracleConnection oracleConnection, string pa
     protected TResult[] CallProcedure<TResult>(
         string procedureName,
         Func<OracleDataReader, TResult> read,
-        params OracleParameter[] parameters)
+        params OracleParameter[] parameters
+    )
     {
         using (_logger.LogDebugDuration($"Calling {PackageName}.{procedureName}"))
         {
@@ -93,7 +98,7 @@ public abstract class OraclePackage(OracleConnection oracleConnection, string pa
                 {
                     BindByName = true,
                     CommandType = CommandType.StoredProcedure,
-                    Connection = oracleConnection
+                    Connection = oracleConnection,
                 };
 
                 command.Parameters.AddRange(parameters);
@@ -121,8 +126,11 @@ public abstract class OraclePackage(OracleConnection oracleConnection, string pa
         sb.Append($"Executing {command.CommandType} command [{command.CommandText} (");
         for (var index = 0; index < command.Parameters.Count; index++)
         {
-            if (index > 0) sb.Append(", ");
-            sb.Append($"{command.Parameters[index].ParameterName}={ValueToString(command.Parameters[index])}");
+            if (index > 0)
+                sb.Append(", ");
+            sb.Append(
+                $"{command.Parameters[index].ParameterName}={ValueToString(command.Parameters[index])}"
+            );
         }
 
         sb.Append(")]");
@@ -142,36 +150,43 @@ public abstract class OraclePackage(OracleConnection oracleConnection, string pa
 
     private Exception HandleSpecificOracleExceptions(OracleException oracleException)
     {
-        _logger.LogDebug(oracleException, "Oracle Exception occured with code: {ErrorNumber}", oracleException.Number);
+        _logger.LogDebug(
+            oracleException,
+            "Oracle Exception occured with code: {ErrorNumber}",
+            oracleException.Number
+        );
         if (IsTextIndexQueryParserSyntaxError(oracleException))
         {
             return new ClientException(
-                    "Stored procedure call failed with: query parser syntax error",
-                    oracleException)
-                .AddError(i18n.QueryParserSyntaxErrorMessage);
+                "Stored procedure call failed with: query parser syntax error",
+                oracleException
+            ).AddError(i18n.QueryParserSyntaxErrorMessage);
         }
 
         if (IsTextIndexWildcardQueryExpansionResultedInTooManyTerms(oracleException))
         {
             return new ClientException(
-                    "Stored procedure call failed with: query expansion resulted in too may terms",
-                    oracleException)
-                .AddError(i18n.QueryExpansionTooManyTermsErrorMessage);
+                "Stored procedure call failed with: query expansion resulted in too may terms",
+                oracleException
+            ).AddError(i18n.QueryExpansionTooManyTermsErrorMessage);
         }
 
         return oracleException;
     }
 
-    private static bool IsTextIndexWildcardQueryExpansionResultedInTooManyTerms(OracleException oracleException)
+    private static bool IsTextIndexWildcardQueryExpansionResultedInTooManyTerms(
+        OracleException oracleException
+    )
     {
-        return (oracleException.Number == ErrorInExecutingOdciIndexStartRoutineErrorCode ||
-                oracleException.Number == OracleTextErrorCode) &&
-            oracleException.Message.Contains(WildcardQueryExpansionResultedInTooManyTerms);
+        return (
+                oracleException.Number == ErrorInExecutingOdciIndexStartRoutineErrorCode
+                || oracleException.Number == OracleTextErrorCode
+            ) && oracleException.Message.Contains(WildcardQueryExpansionResultedInTooManyTerms);
     }
 
     private static bool IsTextIndexQueryParserSyntaxError(OracleException oracleException)
     {
-        return oracleException.Number == ErrorInExecutingOdciIndexStartRoutineErrorCode &&
-            oracleException.Message.Contains(TextQueryParserSyntaxError);
+        return oracleException.Number == ErrorInExecutingOdciIndexStartRoutineErrorCode
+            && oracleException.Message.Contains(TextQueryParserSyntaxError);
     }
 }

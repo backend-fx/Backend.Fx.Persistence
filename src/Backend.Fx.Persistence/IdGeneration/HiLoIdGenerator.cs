@@ -28,7 +28,6 @@ public abstract class HiLoIdGenerator<TId>
     protected abstract TId BlockSize { get; }
 }
 
-
 [PublicAPI]
 public abstract class HiLoIntIdGenerator : HiLoIdGenerator<int>
 {
@@ -56,11 +55,11 @@ public abstract class HiLoIntIdGenerator : HiLoIdGenerator<int>
     {
         var nextId = _lowId;
         Interlocked.Increment(ref _lowId);
-        if (_isTraceEnabled) _logger.LogTrace("Providing id {NextId}", nextId);
+        if (_isTraceEnabled)
+            _logger.LogTrace("Providing id {NextId}", nextId);
         return nextId;
     }
 }
-
 
 [PublicAPI]
 public abstract class HiLoLongIdGenerator : HiLoIdGenerator<long>
@@ -89,7 +88,8 @@ public abstract class HiLoLongIdGenerator : HiLoIdGenerator<long>
     {
         var nextId = _lowId;
         Interlocked.Increment(ref _lowId);
-        if (_isTraceEnabled) _logger.LogTrace("Providing id {NextId}", nextId);
+        if (_isTraceEnabled)
+            _logger.LogTrace("Providing id {NextId}", nextId);
         return nextId;
     }
 }

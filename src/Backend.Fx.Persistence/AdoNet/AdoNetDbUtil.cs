@@ -58,7 +58,9 @@ public abstract class AdoNetDbUtil(DbDataSource dbDataSource) : IDbUtil
             }
         }
 
-        Logger.LogInformation($"Table {schemaName}.{tableName} {(exists ? "exists" : "does not exist")}");
+        Logger.LogInformation(
+            $"Table {schemaName}.{tableName} {(exists ? "exists" : "does not exist")}"
+        );
 
         return exists;
     }

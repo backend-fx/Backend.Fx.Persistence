@@ -14,11 +14,20 @@ public sealed class TestApplication : BackendFxApplication
         DbDataSource dbDataSource,
         IDatabaseAvailabilityAwaiter? databaseAvailabilityAwaiter = null,
         IDatabaseBootstrapper? databaseBootstrapper = null,
-        bool enableTransactions = true)
-        : base(new SimpleInjectorCompositionRoot(), A.Fake<IExceptionLogger>(), typeof(TestApplication).Assembly)
+        bool enableTransactions = true
+    )
+        : base(
+            new SimpleInjectorCompositionRoot(),
+            A.Fake<IExceptionLogger>(),
+            typeof(TestApplication).Assembly
+        )
     {
         var persistenceFeature = new PersistenceFeature(
-            dbDataSource, databaseAvailabilityAwaiter, databaseBootstrapper, enableTransactions);
+            dbDataSource,
+            databaseAvailabilityAwaiter,
+            databaseBootstrapper,
+            enableTransactions
+        );
 
         EnableFeature(persistenceFeature);
     }

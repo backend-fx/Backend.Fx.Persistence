@@ -13,7 +13,6 @@ artifacts/
 
 # Visual Studio 2015 cache/options directory
 .vs/
-.vscode/
 
 # ReSharper is a .NET coding add-in
 _ReSharper*/

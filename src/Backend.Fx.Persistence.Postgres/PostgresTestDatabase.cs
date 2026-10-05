@@ -35,11 +35,11 @@ public abstract class PostgresTestDatabaseBuilder
                 Username = "postgres",
                 Password = PostgresPassword,
                 PersistSecurityInfo = true,
-                IncludeErrorDetail = true
-            });
+                IncludeErrorDetail = true,
+            }
+        );
     }
 }
-
 
 /// <summary>
 /// Waits max 10 secs for the postgres database, creates a new database with a unique name. A maximum of 100 databases
@@ -56,12 +56,14 @@ public class PostgresTestDatabase
         string username,
         string password,
         string databaseNamePrefix,
-        NpgsqlConnectionStringBuilder connectionStringBuilder)
+        NpgsqlConnectionStringBuilder connectionStringBuilder
+    )
     {
         string connectionString = connectionStringBuilder.ConnectionString;
 
-        new PostgresTcpSocketAvailabilityAwaiter(connectionString)
-            .WaitForDatabase(Duration.FromSeconds(10));
+        new PostgresTcpSocketAvailabilityAwaiter(connectionString).WaitForDatabase(
+            Duration.FromSeconds(10)
+        );
 
         // use the system connection string to drop and create the database
         {
@@ -87,12 +89,12 @@ public class PostgresTestDatabase
         DataSource = builder.Build();
 
         // check connection as app user (not "postgres")
-        new PostgresTcpSocketAvailabilityAwaiter(connectionStringBuilder.ConnectionString)
-            .WaitForDatabase(Duration.FromSeconds(10));
+        new PostgresTcpSocketAvailabilityAwaiter(
+            connectionStringBuilder.ConnectionString
+        ).WaitForDatabase(Duration.FromSeconds(10));
     }
 
     public NpgsqlConnectionStringBuilder ConnectionStringBuilder { get; }
-
 
     private static class TestDbNameGenerator
     {
@@ -131,7 +133,6 @@ public class PostgresTestDatabase
             }
         }
 
-
         private class NextTestDbNumSequence : PostgresSequence<int>
         {
             private readonly DbDataSource _dbDataSource;
@@ -159,20 +160,19 @@ public class PostgresTestDatabase
                 dbConnection.Open();
 
                 using var cmd = dbConnection.CreateCommand();
-                cmd.CommandText =
-                    $"""
-                     DO $$
-                     BEGIN
-                        IF NOT EXISTS (
-                            SELECT 1
-                            FROM information_schema.sequences
-                            WHERE sequence_schema = '{SchemaName}' AND sequence_name = '{SequenceName}'
-                        ) THEN
-                           EXECUTE 'CREATE SEQUENCE {SchemaName}.{SequenceName}';
-                        END IF;
-                     END;
-                     $$;
-                     """;
+                cmd.CommandText = $"""
+                    DO $$
+                    BEGIN
+                       IF NOT EXISTS (
+                           SELECT 1
+                           FROM information_schema.sequences
+                           WHERE sequence_schema = '{SchemaName}' AND sequence_name = '{SequenceName}'
+                       ) THEN
+                          EXECUTE 'CREATE SEQUENCE {SchemaName}.{SequenceName}';
+                       END IF;
+                    END;
+                    $$;
+                    """;
 
                 cmd.ExecuteNonQuery();
             }

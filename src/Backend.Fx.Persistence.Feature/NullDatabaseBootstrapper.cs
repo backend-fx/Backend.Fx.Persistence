@@ -6,8 +6,7 @@ namespace Backend.Fx.Persistence.Feature;
 
 public class NullDatabaseBootstrapper : IDatabaseBootstrapper
 {
-    public void Dispose()
-    { }
+    public void Dispose() { }
 
     public Task EnsureDatabaseExistenceAsync(CancellationToken cancellationToken)
     {
@@ -15,6 +14,6 @@ public class NullDatabaseBootstrapper : IDatabaseBootstrapper
         return Task.CompletedTask;
     }
 
-    public IDatabaseBootstrapper.DatabaseState State { get; private set; }
-        = IDatabaseBootstrapper.DatabaseState.NotAvailableYet;
+    public IDatabaseBootstrapper.DatabaseState State { get; private set; } =
+        IDatabaseBootstrapper.DatabaseState.NotAvailableYet;
 }
