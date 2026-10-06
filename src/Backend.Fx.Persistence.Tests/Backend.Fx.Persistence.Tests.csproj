@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Backend.Fx.Execution" Version="1.1.10" />
-        <PackageReference Include="Backend.Fx.Execution.SimpleInjector" Version="1.1.8" />
+        <PackageReference Include="Backend.Fx.Execution" Version="1.1.11" />
+        <PackageReference Include="Backend.Fx.Execution.SimpleInjector" Version="1.1.10" />
         <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" PrivateAssets="all" />
         <PackageReference Include="FakeItEasy" Version="9.0.1" />
         <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="18.11.2" />
