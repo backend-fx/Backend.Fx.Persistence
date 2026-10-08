@@ -21,10 +21,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Backend.Fx.Execution" Version="1.1.10" />
+        <PackageReference Include="Backend.Fx.Execution" Version="1.1.11" />
         <PackageReference
             Include="Microsoft.SourceLink.GitHub"
-            Version="10.0.400"
+            Version="10.0.401"
             PrivateAssets="All"
         />
     </ItemGroup>
