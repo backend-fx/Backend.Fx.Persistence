@@ -49,7 +49,7 @@ jobs:
           fail-on-empty: false
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         if: success() || failure()
         with:
           name: test-results
