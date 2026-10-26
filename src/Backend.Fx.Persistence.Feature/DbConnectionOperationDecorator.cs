@@ -40,21 +40,56 @@ public class DbConnectionOperationDecorator : IOperation
 
     public async Task CompleteAsync(CancellationToken cancellationToken = default)
     {
+        // Keep the connection open if completion fails: the invoker still needs to roll back.
         await _operation.CompleteAsync(cancellationToken).ConfigureAwait(false);
-        _logger.LogDebug("Closing database connection");
-        _dbConnection.Close();
-        _connectionLifetimeLogger?.Dispose();
+        CloseConnection();
     }
 
     public async Task CancelAsync(CancellationToken cancellationToken = default)
     {
-        await _operation.CancelAsync(cancellationToken).ConfigureAwait(false);
-        _logger.LogDebug("Closing database connection");
-        _dbConnection.Close();
-        _connectionLifetimeLogger?.Dispose();
+        var cancellationFailed = false;
+        try
+        {
+            await _operation.CancelAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            cancellationFailed = true;
+            throw;
+        }
+        finally
+        {
+            try
+            {
+                CloseConnection();
+            }
+            catch (Exception ex) when (cancellationFailed)
+            {
+                // Do not replace the rollback error with a secondary cleanup failure.
+                _logger.LogError(
+                    ex,
+                    "Failed to close database connection after cancellation failed for operation {OperationCounter}",
+                    Counter
+                );
+            }
+        }
 
         // note: we do not dispose the DbConnection here, because we did not instantiate it. Disposing is always
         // up to the creator of the instance, that is in this case the injection container.
+    }
+
+    private void CloseConnection()
+    {
+        _logger.LogDebug("Closing database connection");
+        try
+        {
+            _dbConnection.Close();
+        }
+        finally
+        {
+            _connectionLifetimeLogger?.Dispose();
+            _connectionLifetimeLogger = null;
+        }
     }
 
     public int Counter => _operation.Counter;
