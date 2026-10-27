@@ -20,8 +20,8 @@ public class DbTransactionOperationDecorator : IOperation
     private readonly IDbConnection _dbConnection;
     private readonly ICurrentTHolder<IDbTransaction?> _currentTransactionHolder;
     private readonly IOperation _operation;
-    private IDisposable? _transactionLifetimeLogger;
     private TxState _state = TxState.NotStarted;
+    private IDbTransaction? _currentTransaction;
 
     public DbTransactionOperationDecorator(
         IDbConnection dbConnection,
@@ -47,11 +47,8 @@ public class DbTransactionOperationDecorator : IOperation
         }
 
         _logger.LogDebug("Beginning transaction");
-        _currentTransactionHolder.ReplaceCurrent(_dbConnection.BeginTransaction());
-        _transactionLifetimeLogger = _logger.LogDebugDuration(
-            "Transaction open",
-            "Transaction terminated"
-        );
+        _currentTransaction = _dbConnection.BeginTransaction();
+        _currentTransactionHolder.ReplaceCurrent(_currentTransaction);
         _state = TxState.Active;
         await _operation.BeginAsync(serviceScope, cancellationToken).ConfigureAwait(false);
     }
@@ -67,19 +64,33 @@ public class DbTransactionOperationDecorator : IOperation
             );
         }
 
-        if (_currentTransactionHolder.Current == null)
+        if (_currentTransaction == null)
         {
             throw new InvalidOperationException("No current transaction to complete.");
         }
 
         _logger.LogDebug("Committing transaction");
-        _currentTransactionHolder.Current.Commit();
-        _currentTransactionHolder.Current.Dispose();
-        _currentTransactionHolder.ReplaceCurrent(null);
-        _transactionLifetimeLogger?.Dispose();
-        _transactionLifetimeLogger = null;
-
+        _currentTransaction.Commit();
         _state = TxState.Committed;
+
+        try
+        {
+            _currentTransaction.Dispose();
+        }
+        catch (Exception ex)
+        {
+            // The commit succeeded, so a failing disposal must not fail the operation.
+            _logger.LogError(
+                ex,
+                "Failed to dispose the committed transaction of operation {OperationCounter}",
+                Counter
+            );
+        }
+        finally
+        {
+            _currentTransaction = null;
+            _currentTransactionHolder.ReplaceCurrent(null);
+        }
     }
 
     public async Task CancelAsync(CancellationToken cancellationToken = default)
@@ -90,20 +101,56 @@ public class DbTransactionOperationDecorator : IOperation
             throw new InvalidOperationException($"Cannot roll back a transaction that is {_state}");
         }
 
-        await _operation.CancelAsync(cancellationToken).ConfigureAwait(false);
-
-        if (_state == TxState.Active)
+        var cleanupFailed = false;
+        try
         {
-            _currentTransactionHolder.Current?.Rollback();
-            _currentTransactionHolder.Current?.Dispose();
+            await _operation.CancelAsync(cancellationToken).ConfigureAwait(false);
         }
+        catch
+        {
+            cleanupFailed = true;
+            throw;
+        }
+        finally
+        {
+            try
+            {
+                RollbackTransaction();
+            }
+            catch (Exception ex) when (cleanupFailed)
+            {
+                // Do not replace the cancellation error with a secondary rollback failure.
+                _logger.LogError(
+                    ex,
+                    "Failed to roll back the transaction after cancellation failed for operation {OperationCounter}",
+                    Counter
+                );
+            }
+        }
+    }
 
-        _currentTransactionHolder.ClearCurrent();
-
-        _transactionLifetimeLogger?.Dispose();
-        _transactionLifetimeLogger = null;
-
-        _state = TxState.RolledBack;
+    private void RollbackTransaction()
+    {
+        try
+        {
+            if (_state == TxState.Active)
+            {
+                _currentTransaction?.Rollback();
+            }
+        }
+        finally
+        {
+            try
+            {
+                _currentTransaction?.Dispose();
+            }
+            finally
+            {
+                _currentTransaction = null;
+                _currentTransactionHolder.ClearCurrent();
+                _state = TxState.RolledBack;
+            }
+        }
     }
 
     public int Counter => _operation.Counter;
