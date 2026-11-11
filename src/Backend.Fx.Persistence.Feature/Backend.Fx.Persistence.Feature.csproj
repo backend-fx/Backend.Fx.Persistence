@@ -24,7 +24,7 @@
         <PackageReference Include="Backend.Fx.Execution" Version="1.1.11" />
         <PackageReference
             Include="Microsoft.SourceLink.GitHub"
-            Version="10.0.403"
+            Version="11.0.100"
             PrivateAssets="All"
         />
     </ItemGroup>
