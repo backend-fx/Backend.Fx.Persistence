@@ -8,6 +8,9 @@ on:
 jobs:
   release:
     name: release
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -18,6 +21,12 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
+
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: marcwittke
 
       - name: push
         run: |
@@ -31,8 +40,7 @@ jobs:
             -p:Version="${VERSION#v}"
           dotnet nuget push "artifacts/*.nupkg" \
             --source https://api.nuget.org/v3/index.json \
-            --api-key "$NUGET_APIKEY" \
+            --api-key ${{steps.login.outputs.NUGET_API_KEY}} \
             --skip-duplicate
         env:
           VERSION: ${{ github.ref_name }}
-          NUGET_APIKEY: ${{ secrets.NUGET_APIKEY }}
